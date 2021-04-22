@@ -27,7 +27,19 @@ const basePlugins = [
   babel({ babelHelpers: "bundled", comments: false }),
 ]
 
-const terserPlugin = terser({ output: { comments: false } })
+const terserPlugin = terser({
+  output: {
+    comments: {
+      comments: (_, comment) => {
+        const { value, type } = comment
+
+        if (type === "comment2") {
+          return /@preserve|@license|@cc_on/i.test(value)
+        }
+      },
+    },
+  },
+})
 
 const baseOutput = (format) => ({
   banner,
