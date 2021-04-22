@@ -2,10 +2,10 @@
   "name": "core-flux",
   "version": "1.0.2",
   "description": "Shared state manager for ES6 classes and/or constructor functions using the Flux pattern.",
-  "type": "module",
   "main": "lib/core-flux.cjs.min.js",
   "module": "lib/core-flux.es.min.js",
   "browser": "dist/core-flux.min.js",
+  "type": "module",
   "scripts": {
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
@@ -17,31 +17,6 @@
     "prepublishOnly": "paopu && npm run git:update-origin",
     "preversion": "npm test",
     "postversion": "npm run build:publish"
-  },
-  "keywords": [
-    "flux",
-    "state",
-    "global state",
-    "javascript",
-    "reducer",
-    "action",
-    "actions",
-    "store"
-  ],
-  "homepage": "https://github.com/geotrev/core-flux",
-  "author": "George Treviranus <geotrev@icloud.com>",
-  "license": "MIT",
-  "files": [
-    "lib/*.{js,map}",
-    "dist/*.{js,map}",
-    "core-flux.js"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/geotrev/core-flux.git"
-  },
-  "bugs": {
-    "url": "https://github.com/geotrev/core-flux/issues"
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
@@ -59,5 +34,34 @@
     "prettier": "^2.2.1",
     "rollup": "^2.45.2",
     "rollup-plugin-terser": "^7.0.2"
-  }
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
+  "keywords": [
+    "flux",
+    "state",
+    "global state",
+    "javascript",
+    "reducer",
+    "action",
+    "actions",
+    "store"
+  ],
+  "files": [
+    "lib/*.{js,map}",
+    "dist/*.{js,map}",
+    "core-flux.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geotrev/core-flux.git"
+  },
+  "bugs": {
+    "url": "https://github.com/geotrev/core-flux/issues"
+  },
+  "homepage": "https://github.com/geotrev/core-flux",
+  "author": "George Treviranus <geotrev@icloud.com>",
+  "license": "MIT"
 }
