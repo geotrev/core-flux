@@ -27,9 +27,7 @@ const basePlugins = [
   babel({ babelHelpers: "bundled", comments: false }),
 ]
 
-const terserPlugin = terser({
-  output: { comments: false, mangle: { reserved: ["CoreFlux"] } },
-})
+const terserPlugin = terser({ output: { comments: false } })
 
 const baseOutput = (format) => ({
   banner,
