@@ -5,11 +5,10 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/l/core-flux.svg?sanitize=true" alt="License"></a>
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/circleci/github/geotrev/core-flux/master" alt="Circle CI status (master)" /></a>
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/bundlephobia/minzip/core-flux" alt="bundle size" /></a>
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dep/geotrev/core-flux" alt="dependencies" /></a>
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-A 1KB flux-like state manager. Use its out of the box behavior or create your own bindings with ease.
+A 1KB flux-like state manager. Use it out of the box or create your own bindings.
 
 - [Install](#install)
 - [API](#api)
