@@ -8,7 +8,7 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-A 1KB flux-like state manager. Use it out of the box or create your own bindings.
+A 2KB flux-like state manager. Use it out of the box or create your own bindings.
 
 - [Install](#install)
 - [API](#api)
@@ -40,16 +40,16 @@ $ yarn i core-flux
 <!-- The unminified bundle for development -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@0.0.1/dist/core-flux.js"
-  integrity="sha256-h/UcvK+BwuWbktSHGBv0kb4uyS6lbFqYBpcMTAbvBng="
+  src="https://cdn.jsdelivr.net/npm/core-flux@0.0.4/dist/core-flux.js"
+  integrity="sha256-xSotVM/HHkpDRu3G131D/GB9XgFbPZxaGKy1Oo0xRVU="
   crossorigin="anonymous"
 ></script>
 
 <!-- Minified/uglified bundle for production -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@0.0.1/dist/core-flux.min.js"
-  integrity="sha256-Va36r3ZcVt94ybDJ0nCOLl6va381IWzk6jI4JoH3hzg="
+  src="https://cdn.jsdelivr.net/npm/core-flux@0.0.4/dist/core-flux.min.js"
+  integrity="sha256-Y9HW9HSIghRN07Uv4wufMVjpejW37IF+gUy5SvLmRCs="
   crossorigin="anonymous"
 ></script>
 ```
