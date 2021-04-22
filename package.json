@@ -1,6 +1,6 @@
 {
   "name": "core-flux",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Shared state manager for ES6 classes and/or constructor functions using the Flux pattern.",
   "main": "lib/core-flux.cjs.min.js",
   "module": "lib/core-flux.es.min.js",
