@@ -1,0 +1,21 @@
+# run to see file output:
+# npm publish --dry-run
+
+# logs
+npm-error.log*
+debug.log
+
+
+# tests
+__tests__/
+
+# configs
+.browserslistrc
+.eslintignore
+.eslintrc.json
+.prettierignore
+.prettierrc.json
+jest.config.json
+babel.config.json
+paopu.config.json
+rollup.config.js

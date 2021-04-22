@@ -1,0 +1,6 @@
+{
+  "core-flux": {
+    "resources": ["dist/core-flux.js", "dist/core-flux.min.js"],
+    "targets": ["README.md"]
+  }
+}
