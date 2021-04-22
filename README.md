@@ -40,16 +40,16 @@ $ yarn i core-flux
 <!-- The unminified bundle for development -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.1/dist/core-flux.js"
-  integrity="sha256-XmPqE/b0fgqEeCDAjl6wd2LY7NHgVlP/5lItKGkT2H0="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.2/dist/core-flux.js"
+  integrity="sha256-QXR5DwC90385mJaBjrXCVh+9ugA3FoCDpFcPOyc7Txg="
   crossorigin="anonymous"
 ></script>
 
 <!-- Minified/uglified bundle for production -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.1/dist/core-flux.min.js"
-  integrity="sha256-83NDYt5VFFm+Vh51K0Y22cENA9Wle2yMAneHVsytxCY="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.2/dist/core-flux.min.js"
+  integrity="sha256-Lrh4CNgVlpSvHbJZ0CASaPsoV6MDM1AF9T/82nszIKo="
   crossorigin="anonymous"
 ></script>
 ```
