@@ -1,10 +1,6 @@
 import { get } from "./utilities/get"
 import { clone } from "./utilities/clone"
-
-/**
- * Types
- */
-const ASYNC_FN_NAME = "AsyncFunction"
+import { forEach } from "./utilities/for-each"
 
 /**
  * Store dictionary
@@ -73,7 +69,7 @@ function getPropName(path) {
  * @param {string[]} properties
  */
 function updateSubscriber(id, subscriber, properties) {
-  properties.forEach((path) => {
+  forEach(properties, function (path) {
     subscriber[getPropName(path)] = get(getState(id), path)
   })
 }
@@ -90,8 +86,8 @@ function updateSubscribers(id, nextState) {
 
   setState(id, nextState)
 
-  Stores[id].subscribers.forEach(([subscriber, properties]) => {
-    updateSubscriber(id, subscriber, properties)
+  forEach(Stores[id].subscribers, function (entry) {
+    updateSubscriber(id, entry[0], entry[1])
   })
 }
 
@@ -115,17 +111,14 @@ export function createStore(initialState, reducer, updater = null) {
   createSubscribers(id)
 
   return {
-    async dispatch(type, payload) {
+    dispatch(type, payload) {
       const state = getState(id)
-      const nextState =
-        reducer.constructor.name === ASYNC_FN_NAME
-          ? await reducer(type, state, payload)
-          : reducer(type, state, payload)
+      const nextState = reducer(type, state, payload)
 
       return updater
-        ? updater(Stores[id].subscribers, nextState, (rawNextState) =>
-            setState(id, rawNextState)
-          )
+        ? updater(Stores[id].subscribers, nextState, function (rawNextState) {
+            return setState(id, rawNextState)
+          })
         : updateSubscribers(id, nextState)
     },
     subscribe(subscriber, subscribedProperties = []) {

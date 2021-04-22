@@ -24,20 +24,11 @@ const input = path.resolve(__dirname, "core-flux.js")
 const basePlugins = [
   nodeResolve(),
   commonjs(),
-  babel({ babelHelpers: "bundled" }),
+  babel({ babelHelpers: "bundled", comments: false }),
 ]
 
 const terserPlugin = terser({
-  output: {
-    comments: (_, comment) => {
-      const { value, type } = comment
-
-      if (type === "comment2") {
-        return /@preserve|@license|@cc_on/i.test(value)
-      }
-    },
-  },
-  mangle: { reserved: ["CoreFlux"] },
+  output: { comments: false, mangle: { reserved: ["CoreFlux"] } },
 })
 
 const baseOutput = (format) => ({

@@ -3,15 +3,17 @@
  * @param {*} value
  * @returns {string}
  */
-const getTypeTag = (value) =>
-  Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
-
+function getTypeTag(value) {
+  return Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
+}
 /**
  * Checks if the value is an object literal.
  * @param {*} value
  * @returns {boolean}
  */
-const isPlainObject = (value) => getTypeTag(value) === "object"
+function isPlainObject(value) {
+  return getTypeTag(value) === "object"
+}
 
 /**
  * Retrieve a value in obj from the given path. If a value
@@ -23,18 +25,20 @@ const isPlainObject = (value) => getTypeTag(value) === "object"
 export function get(obj, path) {
   path = path.replace(/\[/g, ".").replace(/]/g, "").split(".")
   const length = path.length
+  let idx = -1
 
-  for (const part of path) {
+  while (++idx < length) {
+    const key = path[idx]
     const isEarlyDeadEnd =
-      path.indexOf(part) < length - 1 &&
-      !isPlainObject(obj[part]) &&
-      !Array.isArray(obj[part])
+      path.indexOf(key) < length - 1 &&
+      !isPlainObject(obj[key]) &&
+      !Array.isArray(obj[key])
 
     if (isEarlyDeadEnd) {
       return undefined
     }
 
-    obj = obj[part]
+    obj = obj[key]
   }
 
   return obj
