@@ -8,7 +8,7 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-A 1KB flux-like state manager. Use it out of the box or create your own bindings.
+A 2KB flux-like state manager. Use it out of the box or create your own bindings.
 
 - [Install](#install)
 - [API](#api)

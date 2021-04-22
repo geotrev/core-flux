@@ -7,7 +7,7 @@
   "module": "lib/core-flux.es.min.js",
   "browser": "lib/core-flux.min.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "watch": "rollup -c rollup.config.demo.js -w",
     "build": "BABEL_ENV=build rollup -c",
