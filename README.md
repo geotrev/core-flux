@@ -118,7 +118,7 @@ The result of `createStore` will be helpers used to interact with the store.
 
 ### Subscribe to a store
 
-Last but not least, to subscribe to a store, provide the class or function instance (`this` for either a class or constructor function) and an **array of paths** to properties in the store.
+To subscribe to a store, provide the class or function instance (`this` for either a class or constructor function) and an **array of paths** to properties in the store.
 
 ```js
 import { subscribe } from "./my-store"
