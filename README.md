@@ -8,7 +8,9 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-A 1KB flux-like state manager. Use it out of the box or create your own bindings.
+A 1KB global state manager. Use it out of the box or create your own bindings.
+
+At its core (pun intended), Core Flux is an unopinionated implementation of flux / global state management. It details the basic components of flux architecture: stores, dispatch, actions, and reducers. You can use it anywhere in any context.
 
 - [Install](#install)
 - [API](#api)
@@ -17,8 +19,6 @@ A 1KB flux-like state manager. Use it out of the box or create your own bindings
 - [Subscribe to a store](#subscribe-to-a-store)
 - [Dispatch an action](#dispatch-an-action)
 - [Add a custom updater](#add-a-custom-updater)
-
-By default, Core Flux should be used with constructor functions or ES6 classes, but you can use it in any context if you write your own [custom updater](#use-a-custom-updater). All updates are (and should be) synchronous for speed.
 
 ## Install
 
