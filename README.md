@@ -152,7 +152,7 @@ function subscriptionsUpdated(subscription, state) {
   data.forEach((path) => {
     const pathParts = path.split(".")
     const propName = pathParts[pathParts.length - 1]
-    subscriber[propName] = get(nextState, path)
+    subscriber[propName] = get(state, path)
   })
 }
 ```
