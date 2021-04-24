@@ -91,7 +91,7 @@ function setState(id, nextState = {}) {
 export function createStore(
   initialState,
   reducer,
-  subscriptionAdded,
+  subscriptionsUpdated,
   stateUpdated
 ) {
   const id = createId()
@@ -122,7 +122,7 @@ export function createStore(
 
       subscriptions.push([subscriber, request])
       const length = subscriptions.length
-      subscriptionAdded(subscriptions[length - 1], state)
+      subscriptionsUpdated(subscriptions[length - 1], state)
     },
   }
 }

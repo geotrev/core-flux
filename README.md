@@ -1,5 +1,5 @@
 <h1 align="center">Core Flux</h1>
-<p align="center">1KB unopinionated flux utility. Use it to create stores, manage the data, and direct updates to subscribers.</p>
+<p align="center">0.5KB unopinionated flux utility. Use it to create stores, manage state data, and direct updates to subscribers.</p>
 <br>
 <p align="center">
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
@@ -9,26 +9,19 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-Core Flux enables data to be used in a flux pattern. The best way to understand Core Flux is to understand what it does _not_ do.
-
-Core Flux does not...
-
-- care about the structure of your data
-- care where your data goes
-- update the store or change your data unless you do it yourself
-
-In other words, Core Flux lets you bake the cake and own the bakery. :)
+Core Flux enables state data to be used in a flux pattern. You bring the logic and the library brings the flux.
 
 ---
 
 - [Install](#install)
+- [Glossary](#glossary)
 - [API](#api)
   - [`createStore()`](#createstore)
   - [`subscribe()`](#subscribe)
   - [`dispatch()`](#dispatch)
 - [Handling store updates](#data-flow)
   - [`reducer()`](#reducer)
-  - [`subscriptionAdded()`](#subscriptionadded)
+  - [`subscriptionsUpdated()`](#subscriptionsupdated)
   - [`stateUpdated()`](#stateupdated)
 
 ## Install
@@ -69,14 +62,21 @@ The CDN puts the library in `window.CoreFlux`.
 
 ### createStore
 
-Import and call `createStore` to initialize a new store instance (you can have multiple if you want). You need to pass in your initial state, a [reducer](#write-a-state-reducer), and two store updater callbacks.
+Use `createStore` to initialize a new store instance (you can have multiple if you want). Each store contains its state object and a list of subscriptions.
+
+To initialize a store, pass in:
+
+- your initial state
+- a [state reducer](#write-a-state-reducer)
+- [`subscriptionsUpdated`](#subscriptionsupdated), a function you write to handle new subscriptions
+- [`stateUpdated`](#stateupdated), a function you write to handle state updates
 
 ```js
 // foo-store.js
 
 import { createStore } from "core-flux"
 import { reducer } from "./my-reducer"
-import { subscriptionAdded, stateUpdated } from "./updaters"
+import { subscriptionsUpdated, stateUpdated } from "./updaters"
 
 const initialState = {
   foo: [],
@@ -86,7 +86,7 @@ const initialState = {
 const { subscribe, dispatch } = createStore(
   initialState,
   reducer,
-  subscriptionAdded,
+  subscriptionsUpdated,
   stateUpdated
 )
 
@@ -99,7 +99,7 @@ Once a store is created, you'll be able to add subscriptions with `subscribe` an
 
 This function adds a subscription to the store.
 
-Here's an example of adding a class subscriber with paths to the data in the state object.
+Let's try adding a class subscriber with paths to some data in the state object. In this example, our class instance will expect values from state to be sent to the instance any time there is a state update.
 
 ```js
 import { subscribe } from "./foo-store"
@@ -111,9 +111,9 @@ class FooBar {
 }
 ```
 
-You can pass **any kind** of data as the second argument.
+You can pass **any kind** of data as the second argument. Core Flux doesn't care what your data requirements are!
 
-`subscribe` then triggers your first updater function, [`subscriptionAdded`](#subscriptionadded).
+`subscribe` then triggers your first updater function, [`subscriptionsUpdated`](#subscriptionsupdated).
 
 A subscription will be an array tuple containing both pieces of information given in the `subscribe` call. So, based on the above example, the subscription will be `[FooBarInstance, ["foo", "bar.baz", "bar.beep"]]`.
 
@@ -176,14 +176,14 @@ Additionally, the state object received in your reducer will be a copy, so mutat
 
 Once your reducer finishes, the second updater function gets triggered: [`stateUpdated`](#stateupdated)
 
-### subscriptionAdded
+### subscriptionsUpdated
 
-Any time a new subscription is added to the store, your `subscriptionAdded` function runs.
+Any time a new subscription is added to the store, your `subscriptionsUpdated` function runs.
 
 An example of how you can use this is to pass default state values to a subscriber.
 
 ```js
-function subscriptionAdded(subscription, state) {
+function subscriptionsUpdated(subscription, state) {
   const [subscriber, data] = subscription
 
   data.forEach((path) => {
