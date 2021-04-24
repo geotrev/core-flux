@@ -114,14 +114,9 @@ Once a store is created, you'll be able to add subscriptions with `subscribe` an
 
 #### subscribe
 
-<<<<<<< HEAD
-To subscribe to a store, provide the class or function instance (`this` for either a class or constructor function) and an **array of paths** to properties in the store.
-=======
 Add a subscription to the store.
 
 Let's try adding a class subscriber with paths to some data in the state object. In this example, our class instance will expect values from state to be sent to the instance any time there is a state update.
-
-> > > > > > > develop
 
 ```js
 import { subscribe } from "./foo-store"
