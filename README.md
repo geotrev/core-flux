@@ -170,6 +170,8 @@ const reducer = (type, state, payload) => {
 
 Additionally, the state object received in your reducer will be a copy, so mutate it to your heart's content.
 
+Once your reducer finishes, the second updater function gets triggered: [`stateUpdated`](#stateupdated)
+
 ### subscriptionAdded
 
 Any time a new subscription is added to the store, your `subscriptionAdded` function runs.
