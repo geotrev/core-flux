@@ -119,7 +119,7 @@ A subscription will be an array tuple containing both pieces of information give
 
 ### dispatch
 
-Trigger a state update by calling `dispatch` with an action (string) and payload (object/array/whatever).
+Request a state update by calling `dispatch` with an action (string) and payload (object/array/whatever).
 
 We can expand the above example:
 
@@ -137,6 +137,8 @@ class FooBar {
   }
 }
 ```
+
+To handle the dispatch, you'll need to add a [reducer](#reducer).
 
 ## Data flow
 
