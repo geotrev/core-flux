@@ -1,4 +1,5 @@
 <h1 align="center">Core Flux</h1>
+<p align="center">1KB unopinionated flux utility. Use it to create stores, manage the data, and direct updates to subscribers.</p>
 <br>
 <p align="center">
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
@@ -8,21 +9,28 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-A 1KB flux-like state manager. Use it out of the box or create your own bindings.
+Core Flux enables data to be used in a flux pattern. The best way to understand Core Flux is to understand what it does _not_ do.
+
+Core Flux does not...
+
+- care about the structure of your data
+- care where your data goes
+- update the store or change your data unless you do it yourself
+
+In other words, Core Flux lets you bake the cake and own the bakery. :)
+
+---
 
 - [Install](#install)
 - [API](#api)
-- [Create a reducer](#create-a-reducer)
-- [Create a store](#create-a-store)
-- [Subscribe to a store](#subscribe-to-a-store)
-- [Dispatch an action](#dispatch-an-action)
-- [Add a custom updater](#add-a-custom-updater)
-
-By default, Core Flux should be used with constructor functions or ES6 classes, but you can use it in any context if you write your own [custom updater](#use-a-custom-updater). All updates are (and should be) synchronous for speed.
+  - [`createStore`](#createstore)
+  - [`subscribe`](#subscribe)
+  - [`dispatch`](#dispatch)
+- [Data flow](#data-flow)
+  - [Write a state reducer](#write-a-state-reducer)
+  - [Write an updater](#write-an-updater)
 
 ## Install
-
-Grab it any which way you prefer.
 
 ### NPM / Yarn
 
@@ -35,6 +43,8 @@ $ yarn i core-flux
 ```
 
 ### CDN
+
+The CDN puts the library in `window.CoreFlux`.
 
 ```html
 <!-- The unminified bundle for development -->
@@ -56,15 +66,76 @@ $ yarn i core-flux
 
 ## API
 
-If you've used flux architecture before, then you'll be right at home. If not, it's easy to learn.
+### createStore(state, reducer, updater)
 
-### Create a reducer
+Import and call `createStore` to initialize a new store instance (you can have multiple if you want). You need to pass in your initial state, a [reducer](#write-a-state-reducer), and an [updater](#write-an-updater).
 
-To get started, you'll need to write a reducer containing your own custom state logic.
+```js
+// foo-store.js
 
-A reducer is just a pure function that receives state and returns the _next_ state. When state is given to a reducer, it's a copy and therefore manipulating it won't break your whole store.
+import { createStore } from "core-flux"
+import { reducer } from "./my-reducer"
+import { updater } from "./my-updater"
 
-Additionally, you'll receive a payload which should contain any new data your actions expect.
+const initialState = {
+  foo: [],
+  bar: { baz: 0, beep: "hello" },
+}
+
+const { subscribe, dispatch } = createStore(initialState, reducer, updater)
+
+export { subscribe, dispatch }
+```
+
+Once a store is created, you'll be able to add subscriptions with `subscribe` and update state with `dispatch`.
+
+**Subscription data**
+
+### subscribe(subscriber, data)
+
+This function adds a subscription and to the store.
+
+Here's an example of subscribing a class to your store:
+
+```js
+import { subscribe } from "./foo-store"
+
+class FooBar {
+  constructor() {
+    subscribe(this, ["foo", "bar.baz", "bar.beep"])
+  }
+}
+```
+
+A subscription will be an array tuple containing both pieces of information given in the `subscribe` call. So, based on the above example, the subscription will be `[FooBarInstance, ["foo", "bar.baz", "bar.beep"]]`.
+
+You can then use this subscription information in your [updater function](#write-an-updater).
+
+### dispatch(action, payload)
+
+Call with an action (string) and payload (object/array/whatever).
+
+We can expand the above example by adding a method which dispatches to your store's reducer.
+
+```js
+import { subscribe } from "./foo-store"
+
+class FooBar {
+  constructor() {
+    subscribe(this, ["foo", "bar.baz", "bar.beep"])
+  }
+
+  addFooItem(fooValue) {
+    dispatch("ADD_FOO_ITEM", { id: "123", value: fooValue })
+  }
+}
+```
+
+## Data flow
+
+### Write a state reducer
+
+The reducer for Core Flux should be like what you'd expect in other Flux tooling. It receives an action, the current store state, and a payload to be added/mixed with the current state.
 
 ```js
 import actionTypes from "./my-action-types"
@@ -78,7 +149,7 @@ export const reducer = (type, state, payload) => {
     }
 
     // 'MORE_FOO'
-    case actionTypes.MORE_FOO: {
+    case actionTypes.ADD_FOO_ITEM: {
       state.foo.concat(payload.foo)
       return state
     }
@@ -90,93 +161,27 @@ export const reducer = (type, state, payload) => {
 }
 ```
 
-### Create a store
+### Write an updater
 
-Import and call `createStore` to initialize a new store instance (you can have multiple if you want). All that's required is the default **initial state object** and a **[reducer function](#create-a-reducer)**.
+The updater is the callback triggered after the reducer. Use it to pass along requested state to each subscriber, conditionally update the store based on the resolved state, pass the state through some additional middleware... really anything at all!
 
-```js
-import { createStore } from "core-flux"
-import { reducer } from "./my-reducer"
-
-const initialState = {
-  foo: [],
-  bar: {
-    baz: 0,
-    beep: "hello",
-  },
-}
-
-const { subscribe, dispatch } = createStore(initialState, reducer)
-
-export { subscribe, dispatch }
-```
-
-The result of `createStore` will be helpers used to interact with the store.
-
-- `dispatch`: Update your store's state with an accompanying action/payload.
-- `subscribe`: Subscribe a class or constructor function to your store.
-
-### Subscribe to a store
-
-Last but not least, to subscribe to a store, provide the class or function instance (`this` for either a class or constructor function) and an **array of paths** to properties in the store.
+To show an example, let's continue on from the previous examples in this README. Let's update the store with the new state, then update each subscriber with the properties they've subscribed to from state (previously denoted as obj paths).
 
 ```js
-import { subscribe } from "./my-store"
+// my-updater.js
+import get from "lodash/get"
 
-// Class
-class FooBar {
-  constructor() {
-    subscribe(this, ["foo", "some.bar.beep"])
-  }
+function updater(subscribers, nextState, setState) {
+  // Update the store
+  setState(nextState)
 
-  get myBeep() {
-    return this.beep
-  }
-}
-
-// Constructor function
-const FooBar() {
-  subscribe(this, ["foo", "some.bar.beep"])
+  // Update subscribers
+  subscribers.forEach(([subscriber, data]) => {
+    data.forEach((path) => {
+      const pathParts = path.split(".")
+      const propName = pathParts[pathParts.length - 1]
+      subscriber[propName] = get(nextState, path)
+    })
+  })
 }
 ```
-
-**Whenever these state properties change, the values are automatically forwarded to your class as matching properties.** To use the above example, `foo` and `beep` would be the properties updated on your class.
-
-### Dispatch an action
-
-Provide an **action type** and the **payload object** which reflects a piece of state to be handled in your reducer.
-
-```js
-import { dispatch } from "./my-store"
-import actionTypes from "./my-action-types"
-
-dispatch(actionTypes.ADD_MORE_FOO, {
-  foo: [{ id: "baz", value: "beep" }],
-})
-
-dispatch(actionTypes.ADD_ONE)
-```
-
-### Add a custom updater
-
-**NOTE: This is an advanced configuration option; proceed with caution!**
-
-By default, Core Flux run its own set of instructions after your reducer has returned the next state object, resulting in subscribers automatically getting updated. But what if you don't want to do that? What if you want to hand off the new state to some middleware or alternate state updating mechanism?
-
-Well, you can!
-
-You can pass in a custom updater function as the third argument to `createStore`:
-
-```js
-const myUpdater = (subscribers, state, setState) => {
-  // do your own thing
-}
-
-const { subscribe, dispatch } = createStore(initialState, reducer, myUpdater)
-```
-
-Your updater receives three arguments:
-
-- `subscribers`: An array of tuples containing 1) a given subscriber and 2) the list of property subscriptions for that subscriber. **This is a live store reference.** Mutating it may break your subscriber's expectations.
-- `state`: An immutable copy of the current store state.
-- `setState`: A function to, well, set your new state object.
