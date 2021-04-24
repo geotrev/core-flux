@@ -111,18 +111,19 @@ class FooBar {
 }
 ```
 
-A subscription will be an array tuple containing both pieces of information given in the `subscribe` call. So, based on the above example, the subscription will be `[FooBarInstance, ["foo", "bar.baz", "bar.beep"]]`.
+`subscribe` then triggers your first updater function, [`subscriptionAdded`](#subscriptionadded).
 
-You can then use this subscription information in your [updater function](#write-an-updater).
+A subscription will be an array tuple containing both pieces of information given in the `subscribe` call. So, based on the above example, the subscription will be `[FooBarInstance, ["foo", "bar.baz", "bar.beep"]]`.
 
 ### dispatch
 
-Call with an action (string) and payload (object/array/whatever).
+Trigger a state update by calling `dispatch` with an action (string) and payload (object/array/whatever).
 
-We can expand the above example by adding a method which dispatches to your store's reducer.
+We can expand the above example:
 
 ```js
 import { subscribe } from "./foo-store"
+import actions from "./my-actions"
 
 class FooBar {
   constructor() {
@@ -130,7 +131,7 @@ class FooBar {
   }
 
   addFooItem(fooValue) {
-    dispatch("ADD_FOO_ITEM", { id: "123", value: fooValue })
+    dispatch(actions.ADD_FOO_ITEM, { id: "123", value: fooValue })
   }
 }
 ```
@@ -139,21 +140,23 @@ class FooBar {
 
 ### reducer
 
-The reducer for Core Flux should be like what you'd expect in other Flux tooling. It receives an action, the current store state, and a payload to be added/mixed with the current state.
+A reducer for Core Flux should be like what you'd expect in other Flux tooling.
+
+Simply put: it's a pure function that receives state, manipulates it in some way, and returns new state.
 
 ```js
-import actionTypes from "./my-action-types"
+import actions from "./my-actions"
 
-export const reducer = (type, state, payload) => {
+const reducer = (type, state, payload) => {
   switch (type) {
     // 'ADD_ONE'
-    case actionTypes.ADD_ONE: {
+    case actions.ADD_ONE: {
       state.bar.baz += 1
       return state
     }
 
-    // 'MORE_FOO'
-    case actionTypes.ADD_FOO_ITEM: {
+    // 'ADD_FOO_ITEM'
+    case actions.ADD_FOO_ITEM: {
       state.foo.concat(payload.foo)
       return state
     }
@@ -164,6 +167,8 @@ export const reducer = (type, state, payload) => {
   }
 }
 ```
+
+Additionally, the state object received in your reducer will be a copy, so mutate it to your heart's content.
 
 ### `subscriptionAdded`
 
@@ -183,16 +188,18 @@ function subscriptionAdded(subscription, state) {
 }
 ```
 
+Again, you define what `data` is and how it relates to your subscribers!
+
 ### `stateUpdated`
 
-When a `dispatch` occurs and your reducer runs, the `stateUpdated` function then runs.
+When a `dispatch` occurs and your reducer has returned a new state value, the `stateUpdated` function then runs.
 
 Examples of how you can use this function include:
 
 - setting updated state values back to the store using `setState`
 - updating all your subscribers with any new state values they might be expecting
 
-To extend our previous examples, here's what this might look like in practice:
+To once again extend our previous examples:
 
 ```js
 import get from "lodash/get"
