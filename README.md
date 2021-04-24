@@ -110,7 +110,7 @@ export { subscribe, dispatch }
 
 Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
 
-### Add to a Store
+### Add subscription
 
 #### subscribe
 
