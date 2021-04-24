@@ -14,7 +14,6 @@ Core Flux enables state data to be used in a flux pattern. You bring the logic a
 ---
 
 - [Install](#install)
-- [Glossary](#glossary)
 - [API](#api)
   - [`createStore()`](#createstore)
   - [`subscribe()`](#subscribe)
