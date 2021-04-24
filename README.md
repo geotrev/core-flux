@@ -122,7 +122,7 @@ Trigger a state update by calling `dispatch` with an action (string) and payload
 We can expand the above example:
 
 ```js
-import { subscribe } from "./foo-store"
+import { subscribe, dispatch } from "./foo-store"
 import actions from "./my-actions"
 
 class FooBar {
