@@ -1,7 +1,3 @@
-import { get } from "./utilities/get"
-import { clone } from "./utilities/clone"
-import { forEach } from "./utilities/for-each"
-
 /**
  * Store dictionary
  */
@@ -20,11 +16,44 @@ function createId() {
 }
 
 /**
+ * Creates a 1:1 clone of an object. Assumes all values are
+ * simple primitives: numbers, strings, objects, arrays.
+ * @param {Object|Array} obj
+ * @returns {Object|Array}
+ */
+function clone(obj) {
+  if (!obj) {
+    return obj
+  }
+
+  const isArray = Array.isArray(obj)
+
+  let value,
+    newObj = isArray ? [] : {}
+
+  if (isArray) {
+    let length = obj.length,
+      idx = -1
+    while (++idx < length) {
+      newObj[idx] = obj[idx]
+    }
+  } else {
+    for (const key in obj) {
+      value = obj[key]
+      newObj[key] = newObj[key] =
+        value === null ? null : typeof value === "object" ? clone(value) : value
+    }
+  }
+
+  return newObj
+}
+
+/**
  * Append a new state object to a Store.
  * @param {string} id
  * @param {{}} initialState
  */
-function createState(id, initialState = {}) {
+function initState(id, initialState = {}) {
   Stores[id].state = initialState
 }
 
@@ -32,8 +61,8 @@ function createState(id, initialState = {}) {
  * Append a new subscriber array to a Store.
  * @param {string} id
  */
-function createSubscribers(id) {
-  Stores[id].subscribers = []
+function initSubscriptions(id) {
+  Stores[id].subscriptions = []
 }
 
 /**
@@ -52,89 +81,48 @@ function setState(id, nextState = {}) {
 }
 
 /**
- * Derives a new name for a subscriber's property by
- * the inner-most property name of a path.
- * @param {string} path
- * @returns {string}
- */
-function getPropName(path) {
-  const parts = path.split(".")
-  return parts[parts.length - 1]
-}
-
-/**
- * Updates subscribed properties on a given subscriber.
- * @param {string} id
- * @param {constructor} subscriber
- * @param {string[]} properties
- */
-function updateSubscriber(id, subscriber, properties) {
-  forEach(properties, function (path) {
-    subscriber[getPropName(path)] = get(getState(id), path)
-  })
-}
-
-/**
- * Updates a given Store's state, then forwards the values
- * to all subscribers of that Store. If the state is falsy,
- * nothing happens.
- * @param {string} id
- * @param {Object} nextState
- */
-function updateSubscribers(id, nextState) {
-  if (!nextState) return
-
-  setState(id, nextState)
-
-  forEach(Stores[id].subscribers, function (entry) {
-    updateSubscriber(id, entry[0], entry[1])
-  })
-}
-
-/**
- * Creates a new Store instance for a subscriber, then
- * returns helper functions for that Store.
+ * Creates a new Store.
  *
- * If a custom updater is given, subscriber logic doesn't run
- * and it defers to the updater.
  * @param {Object} initialState
  * @param {Function} reducer
- * @param {Function=null} updater
+ * @param {Function} updater
  * @returns {{dispatch: Function, subscribe: Function}}
  */
-export function createStore(initialState, reducer, updater = null) {
+export function createStore(
+  initialState,
+  reducer,
+  subscriptionsUpdated,
+  stateUpdated
+) {
   const id = createId()
 
   Stores[id] = {}
-
-  createState(id, initialState)
-  createSubscribers(id)
+  initState(id, initialState)
+  initSubscriptions(id)
 
   return {
     dispatch(type, payload) {
       const state = getState(id)
-      const nextState = reducer(type, state, payload)
+      const nextState = reducer(type, state, payload || {})
 
-      return updater
-        ? updater(Stores[id].subscribers, nextState, function (rawNextState) {
-            return setState(id, rawNextState)
-          })
-        : updateSubscribers(id, nextState)
+      return stateUpdated(
+        Stores[id].subscriptions,
+        nextState,
+        function (rawNextState) {
+          return setState(id, rawNextState)
+        }
+      )
     },
-    subscribe(subscriber, subscribedProperties = []) {
-      if (
-        !subscriber ||
-        !Array.isArray(subscribedProperties) ||
-        !subscribedProperties.length
-      ) {
+    subscribe(subscriber, request) {
+      if (!subscriber || !request) {
         return
       }
 
-      if (!updater) {
-        updateSubscriber(id, subscriber, subscribedProperties)
-      }
+      const { subscriptions, state } = Stores[id]
 
-      Stores[id].subscribers.push([subscriber, subscribedProperties])
+      subscriptions.push([subscriber, request])
+      const length = subscriptions.length
+      subscriptionsUpdated(subscriptions[length - 1], state)
     },
   }
 }
