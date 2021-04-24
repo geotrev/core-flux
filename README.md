@@ -111,6 +111,8 @@ class FooBar {
 }
 ```
 
+You can pass **any kind** of data as the second argument.
+
 `subscribe` then triggers your first updater function, [`subscriptionAdded`](#subscriptionadded).
 
 A subscription will be an array tuple containing both pieces of information given in the `subscribe` call. So, based on the above example, the subscription will be `[FooBarInstance, ["foo", "bar.baz", "bar.beep"]]`.
