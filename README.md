@@ -69,7 +69,7 @@ The CDN puts the library in `window.CoreFlux`.
 
 ### createStore
 
-Import and call `createStore` to initialize a new store instance (you can have multiple if you want). You need to pass in your initial state, a [reducer](#write-a-state-reducer), and an [updater](#write-an-updater).
+Import and call `createStore` to initialize a new store instance (you can have multiple if you want). You need to pass in your initial state, a [reducer](#write-a-state-reducer), and two store updater callbacks.
 
 ```js
 // foo-store.js
