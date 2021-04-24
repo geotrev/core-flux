@@ -81,21 +81,22 @@ function setState(id, nextState = {}) {
 }
 
 /**
- * Creates a new Store instance for a subscriber, then
- * returns helper functions for that Store.
+ * Creates a new Store.
  *
- * If a custom updater is given, subscriber logic doesn't run
- * and it defers to the updater.
  * @param {Object} initialState
  * @param {Function} reducer
  * @param {Function} updater
  * @returns {{dispatch: Function, subscribe: Function}}
  */
-export function createStore(initialState, reducer, updater) {
+export function createStore(
+  initialState,
+  reducer,
+  subscriptionAdded,
+  stateUpdated
+) {
   const id = createId()
 
   Stores[id] = {}
-
   initState(id, initialState)
   initSubscriptions(id)
 
@@ -104,7 +105,7 @@ export function createStore(initialState, reducer, updater) {
       const state = getState(id)
       const nextState = reducer(type, state, payload || {})
 
-      return updater(
+      return stateUpdated(
         Stores[id].subscriptions,
         nextState,
         function (rawNextState) {
@@ -117,7 +118,11 @@ export function createStore(initialState, reducer, updater) {
         return
       }
 
-      Stores[id].subscriptions.push([subscriber, request])
+      const { subscriptions, state } = Stores[id]
+
+      subscriptions.push([subscriber, request])
+      const length = subscriptions.length
+      subscriptionAdded(subscriptions[length - 1], state)
     },
   }
 }
