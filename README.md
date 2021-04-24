@@ -27,9 +27,9 @@ In other words, Core Flux lets you bake the cake and own the bakery. :)
   - [`subscribe()`](#subscribe)
   - [`dispatch()`](#dispatch)
 - [Handling store updates](#data-flow)
-  - [reducer()](#reducer)
-  - [subscriptionAdded()](#subscriptionadded)
-  - [stateUpdated()](#stateupdated)
+  - [`reducer()`](#reducer)
+  - [`subscriptionAdded()`](#subscriptionadded)
+  - [`stateUpdated()`](#stateupdated)
 
 ## Install
 
