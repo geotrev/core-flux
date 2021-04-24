@@ -138,7 +138,7 @@ class FooBar {
 }
 ```
 
-To handle the dispatch, you'll need to add a [reducer](#reducer).
+The dispatch then hands off to your [reducer](#reducer).
 
 ## Data flow
 
