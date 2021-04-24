@@ -1,6 +1,6 @@
 {
   "name": "core-flux",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Manage your own state.",
   "main": "lib/core-flux.cjs.min.js",
   "module": "lib/core-flux.es.min.js",
