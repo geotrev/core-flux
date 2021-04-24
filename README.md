@@ -167,9 +167,9 @@ export const reducer = (type, state, payload) => {
 
 ### `subscriptionAdded`
 
-Any time a new subscription is added to the store, your `subscriptionAdded` function will run.
+Any time a new subscription is added to the store, your `subscriptionAdded` function runs.
 
-An example of how you can use this is to load in any default state values your subscriber expects.
+An example of how you can use this is to pass default state values to a subscriber.
 
 ```js
 function subscriptionAdded(subscription, state) {
@@ -185,14 +185,16 @@ function subscriptionAdded(subscription, state) {
 
 ### `stateUpdated`
 
-Any time a `dispatch` occurs and your reducer runs, your `stateUpdated` function will run.
+When a `dispatch` occurs and your reducer runs, the `stateUpdated` function then runs.
 
-An example of how you can use this function is to set the final state value back to the store using `setState` and update all your subscribers with any new state values they might be expecting.
+Examples of how you can use this function include:
+
+- setting updated state values back to the store using `setState`
+- updating all your subscribers with any new state values they might be expecting
 
 To extend our previous examples, here's what this might look like in practice:
 
 ```js
-// my-updater.js
 import get from "lodash/get"
 
 function stateUpdated(subscribers, nextState, setState) {
