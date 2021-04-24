@@ -170,7 +170,7 @@ const reducer = (type, state, payload) => {
 
 Additionally, the state object received in your reducer will be a copy, so mutate it to your heart's content.
 
-### `subscriptionAdded`
+### subscriptionAdded
 
 Any time a new subscription is added to the store, your `subscriptionAdded` function runs.
 
@@ -190,7 +190,7 @@ function subscriptionAdded(subscription, state) {
 
 Again, you define what `data` is and how it relates to your subscribers!
 
-### `stateUpdated`
+### stateUpdated
 
 When a `dispatch` occurs and your reducer has returned a new state value, the `stateUpdated` function then runs.
 
