@@ -64,6 +64,22 @@ The CDN puts the library in `window.CoreFlux`.
 
 ## API
 
+### A word about data
+
+As already stated at the top of this README, Core Flux doesn't really do a whole lot with your data. There is however a simple data model that you can expect from Core Flux's subscription implementation.
+
+Subscriptions will always be an array of tuples, like so:
+
+```js
+[
+  [subscriber, data],
+  [subscriber, data],
+  ...
+]
+```
+
+When you are interacting with subscriptions as part of `subscriptionsUpdated` or `stateUpdated`, keep this in mind when defining your own state.
+
 ### createStore
 
 Use `createStore` to initialize a new store instance. You can have multiple if you want.
@@ -110,7 +126,7 @@ export { subscribe, dispatch }
 
 Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
 
-### Add to a Store
+### Add subscription
 
 #### subscribe
 
@@ -132,8 +148,6 @@ You can pass **any kind** of data as the second argument. Core Flux doesn't care
 
 `subscribe` then triggers your first updater function, [`subscriptionsUpdated`](#subscriptionsupdated).
 
-A subscription will be an array tuple containing both pieces of information given in the `subscribe` call. So, based on the above example, the subscription will be `[FooBarInstance, ["foo", "bar.baz", "bar.beep"]]`.
-
 #### subscriptionsUpdated
 
 Any time a new subscription is added to the store, your `subscriptionsUpdated` function runs.
@@ -152,24 +166,26 @@ function subscriptionsUpdated(subscription, state) {
   data.forEach((path) => {
     const pathParts = path.split(".")
     const propName = pathParts[pathParts.length - 1]
-    subscriber[propName] = get(nextState, path)
+    subscriber[propName] = get(state, path)
   })
 }
 ```
 
-Again, you define what `data` is and how it relates to your subscribers!
+In the above, `data` is an array of strings describing paths to state properties. E.g., `["foo.bar", "bar[0].baz"]`
+
+But again, you define what `data` is and how it relates to your subscribers and/or state.
 
 ### Update state
 
 #### dispatch
 
-Request a state update by calling `dispatch` with an action (string) and payload (object/array/whatever).
+Request a state update by calling `dispatch` with an action (string) and payload of data.
 
-We can expand the above example:
+We can expand the previous example:
 
 ```js
 import { subscribe, dispatch } from "./foo-store"
-import actions from "./my-actions"
+import actions from "./foo-actions"
 
 class FooBar {
   constructor() {
@@ -186,12 +202,10 @@ The dispatch then hands off to your [reducer](#reducer).
 
 #### reducer
 
-A reducer for Core Flux should be like what you'd expect in other Flux tooling.
-
-Simply put: it's a pure function that receives state, manipulates it in some way, and returns new state.
+A reducer in Core Flux is simply a pure function that receives state, manipulates it in some way, and returns new state.
 
 ```js
-import actions from "./my-actions"
+import actions from "./foo-actions"
 
 /**
  * Returns the next version of state.
@@ -218,7 +232,7 @@ const reducer = (type, state, payload) => {
 }
 ```
 
-Additionally, the state object received in your reducer will be a copy, so mutate it to your heart's content.
+Additionally, the `state` argument received in your reducer will be a copy, so mutate it to your heart's content.
 
 Once your reducer finishes, the second updater function gets triggered: [`stateUpdated`](#stateupdated)
 
@@ -226,12 +240,16 @@ Once your reducer finishes, the second updater function gets triggered: [`stateU
 
 When a `dispatch` occurs and your reducer has returned a new state value, the `stateUpdated` function then runs.
 
-Examples of how you can use this function include:
+As part of this step, **you as the consumer are responsible for setting state back to the Store.** This might seem counterintuitive, but as discussed at the beginning of this README, it gives you the flexibility to define when/how/why state makes it into and out of the store.
 
+Examples of how you can use this function include, but aren't limited to:
+
+- not updating the store based on the result of your reducer
 - setting updated state values back to the store using `setState`
 - updating all your subscribers with any new state values they might be expecting
+- using the incoming state value as part of an extra middleware step
 
-To once again extend our previous examples:
+Below, let's do the typical flux behavior of updating subscribers with their requested state values and updating the store.
 
 ```js
 import get from "lodash/get"
@@ -256,3 +274,5 @@ function stateUpdated(subscribers, nextState, setState) {
   })
 }
 ```
+
+As mentioned, this is how one might expect to use a flux utility. But there's no reason why you can't create your own bindings for custom use-cases. :)
