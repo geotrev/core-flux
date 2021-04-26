@@ -100,7 +100,7 @@ function reducer(type, state, payload) {
   // create next state
 }
 
-function subscriptionsadded(newSubscription, state) {
+function subscriptionsUpdated(newSubscription, state) {
   // handle new subscription added to the store
   // e.g., hydrate subscriber with default state
 }
