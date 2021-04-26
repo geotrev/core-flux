@@ -157,7 +157,9 @@ function subscriptionsUpdated(subscription, state) {
 }
 ```
 
-Again, you define what `data` is and how it relates to your subscribers!
+In the above, `data` is an array of strings describing paths to state properties. E.g., `["foo.bar", "bar[0].baz"]`
+
+But again, you define what `data` is and how it relates to your subscribers and/or state.
 
 ### Update state
 
