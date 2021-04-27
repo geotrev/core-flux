@@ -155,6 +155,8 @@ Any time a new subscription is added to the store, your `subscriptionsUpdated` f
 An example of how you can use this is to pass default state values to a subscriber.
 
 ```js
+import get from "lodash/get"
+
 /**
  * Handle new subscription being added
  * @param {[object, object]} subscription
