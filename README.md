@@ -188,7 +188,7 @@ class FooItems {
     return this.foo
   }
 
-  set addToFoo(item) {
+  set addItem(item) {
     dispatch("ADD_FOO_ITEM", { item })
   }
 }
@@ -197,8 +197,10 @@ const fooBar = new FooItems()
 fooBar.addToFoo("bop")
 ```
 
-Now when the button is clicked, `dispatch` will tell your store to begin the state update process.
+Now when the `addItem` method is clicked, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
 
-The next step being that your reducer could have a logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to state, then returns it. Finally, the result would then be handed over to `bindState`.
+The next step being that your reducer could have a logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to state, then returns the resulting new state. 
 
-> Any data type can be used as the payload, however, much like in `subscribe`, it's best to keep it consistent so your reducer can have consistent assumptions.
+Finally, the result would then be handed over to `bindState`.
+
+> Any data type can be used as the payload, however, much like in `subscribe`, it's best to keep your data consistent so your reducer can have reliable expectations.
