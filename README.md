@@ -32,7 +32,7 @@ $ yarn i core-flux
 
 ### CDN
 
-The CDN puts the library in `window.CoreFlux`.
+The CDN puts the library on `window.CoreFlux`.
 
 ```html
 <!-- The unminified bundle for development -->
@@ -58,12 +58,12 @@ The CDN puts the library in `window.CoreFlux`.
 
 Core Flux has a relatively simple data model that will come into play when writing bindings.
 
-Here is how an example store might look in memory:
+Here is how a store would look in memory:
 
 ```js
 Store {
   state: { ... },
-  
+
   subscriptions: [
     [subscriber, data],
     [subscriber, data],
@@ -75,11 +75,11 @@ Store {
 
 Each subscription contains a `subscriber` and some form of `data` that informs a relationship between `state` and `subscriber`. See [`createStore`](#createstore) on how to add subscriptions.
 
-Keep this data model in mind when [adding new subscriptions](#subscriptionsupdated) and [creating a binding](#bind).
+Keep this data model in mind when adding new subscriptions and creating a binding
 
 ### createStore
 
-The one and only export of Core Flux. Use it to initialize a new store instance. You can create as few or as many stores as your heart desires! They will all be independent from one another.
+The one and only export of Core Flux. Use it to create a store instance. You can create as few or as many stores as your heart desires! They will all be independent from one another.
 
 The function **requires** all four of its arguments, as shown here:
 
@@ -94,46 +94,51 @@ const initialState = {
 }
 
 /**
-  * Receives a dispatched `type` and returns a new version 
-  * of `state` based on the given `payload`.
-  * 
-  * @param {string} type
-  * @param {object} state
-  * @param {*} payload
-  * @returns {object} state
-  */
+ * Receives a `payload` and returns a new version
+ * of `state` based on the given `type`.
+ *
+ * @param {string} type
+ * @param {object} state
+ * @param {*} payload
+ * @returns {object} state
+ */
 function reducer(type, state, payload) {
   // ...
 }
 
 /**
-  * Receives a new subscription as provided by the `subscribe`
-  * function, along with the current state.
-  * 
-  * @param {[object, *]} newSubscription
-  * @param {object} state
-  */
-function subscriptionsUpdated(newSubscription, state) {
+ * Receives a new subscription as provided by the `subscribe`
+ * function, along with the current state. The subscription
+ * will have been automatically added to the store when this
+ * function is called.
+ *
+ * @param {[object, *]} newSubscription - a tuple containing the new subscriber and its data
+ * @param {object} state - immutable copy of state
+ */
+function bindSubscriber(newSubscription, state) {
   // ...
 }
 
 /**
-  * Receives the next version of state for binding to the 
-  * store and/or subscribers.
-  * 
-  * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
-  * @param {object} nextState - the next version of state as defined in your reducer.
-  * @param {Function} setState - function that takes your state object and assigns it back to the store.
-  */
-function bind(subscriptions, nextState, setState) {
+ * Receives the next version of state for binding to the
+ * store and/or subscribers. Unlike `bindSubscriber`, this
+ * function does not automatically update the store's state
+ * object beforehand, and requires you to manually do so
+ * via the `setState` helper.
+ *
+ * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
+ * @param {object} nextState - the next version of state as defined in your reducer.
+ * @param {Function} setState - function that takes your state object and assigns it back to the store.
+ */
+function bindState(subscriptions, nextState, setState) {
   // ...
 }
 
 const { subscribe, dispatch } = createStore(
   initialState,
   reducer,
-  subscriptionsUpdated,
-  bind
+  bindSubscriber,
+  bindState
 )
 
 export { subscribe, dispatch }
@@ -143,35 +148,55 @@ Once a store is created, you'll be able to add subscriptions with `subscribe` an
 
 ### subscribe
 
-A function that adds a subscription to your store. It will always be tied to a single store, and subsequently state object.
+Adds a subscription to your store. It will always be tied to a single store, and subsequently state object.
 
 ```js
 import { subscribe } from "./foo-store"
 
-const fooSubscriber = {
-  foo: 'bar',
-  baz: 'fizz',
-}
+class FooItems {
+  constructor() {
+    subscribe(this, ["foo"])
+  }
 
-subscribe(fooSubscriber, ['baz'])
+  get items() {
+    return this.foo
+  }
+}
 ```
 
-In the above example, `fooSubscriber` is an object that depends on your store's `baz` property in state.
+In the above example, we've designed our subscriber, the `FooItems` class, to declare an array of strings correlating to properties in the store's state.
 
-In general, you should try to use a simple data structure as the second argument to `subscribe`; this ensures your state binding has consistent expectations.
+Additionally, when this `subscribe` call is made, the `bindSubscriber` function will be called where this logic can be customized. E.g., assigning a default state value from state into the subscriber.
+
+> In general, you should try to use a simple data structure as the second argument to `subscribe`; this ensures your state binding has consistent expectations.
 
 ### dispatch
 
-Let's say you have a few subscriptions in your store. How do you kick off a state update and pass along new data to your subscribers? That's where this function comes in.
+Let's say you have some subscriptions in your store. How do you kick off a state update for subscribers? That's where `dispatch` comes into play.
+
+Let's extend the previous example:
 
 ```js
-import { dispatch } from "./foo-store"
+import { subscribe } from "./foo-store"
 
-function changeFoo() {
-  dispatch('NEW_FOO', {foo: 'beep'})
+class FooItems {
+  constructor() {
+    subscribe(this, ["foo"])
+  }
+
+  get items() {
+    return this.foo
+  }
+
+  set addToFoo(item) {
+    dispatch("ADD_FOO_ITEM", { item })
+  }
 }
 
-<button onclick="changeFoo()">Change foo</button>
+const fooBar = new FooItems()
+fooBar.addToFoo("bop")
 ```
 
-Now when the button is clicked, `dispatch` will tell your store to begin the state update process. For example, your reducer would have a conditional check on if `NEW_FOO` is received, and if so, might set `state.foo = 'beep'`.
+Now when the button is clicked, `dispatch` will tell your store to begin the state update process.
+
+The next step being that your reducer might have logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to the store.
