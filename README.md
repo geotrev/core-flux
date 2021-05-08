@@ -38,16 +38,16 @@ The CDN puts the library on `window.CoreFlux`.
 <!-- The unminified bundle for development -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.6/dist/core-flux.js"
-  integrity="sha256-1STxSN8Dx49R8gsqOXmLLo7UqayB3O3CFAHjomDnOX8="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.7/dist/core-flux.js"
+  integrity="sha256-dLB29xsPTHfeIag/xAGHE003gzIJXKMHAdAr7vghHVI="
   crossorigin="anonymous"
 ></script>
 
 <!-- Minified/uglified bundle for production -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.6/dist/core-flux.min.js"
-  integrity="sha256-kGBp8KGG/a+6gIJpAvmc1aZWegvhSKNQtIOiOYmXUcI="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.7/dist/core-flux.min.js"
+  integrity="sha256-yxelU39ZPLOF4qZwwdhHCOhoazFQPv5Z70FcHI89x2g="
   crossorigin="anonymous"
 ></script>
 ```
@@ -75,7 +75,7 @@ Store {
 
 Each subscription contains a `subscriber` and some form of `data` that informs a relationship between `state` and `subscriber`. See [`createStore`](#createstore) on how to add subscriptions.
 
-Keep this data model in mind when adding new subscriptions and creating a binding
+Keep this data model in mind when adding new subscriptions and creating bindings.
 
 ### createStore
 
@@ -99,7 +99,7 @@ const initialState = {
  *
  * @param {string} type
  * @param {object} state
- * @param {*} payload
+ * @param {*={}} payload
  * @returns {object} state
  */
 function reducer(type, state, payload) {
@@ -127,7 +127,7 @@ function bindSubscriber(newSubscription, state) {
  * via the `setState` helper.
  *
  * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
- * @param {object} nextState - the next version of state as defined in your reducer.
+ * @param {object} nextState - the version of state given by your reducer.
  * @param {Function} setState - function that takes your state object and assigns it back to the store.
  */
 function bindState(subscriptions, nextState, setState) {
@@ -164,9 +164,9 @@ class FooItems {
 }
 ```
 
-In the above example, we've designed our subscriber, the `FooItems` class, to declare an array of strings correlating to properties in the store's state.
+In the above example, we've designed our subscriber, the `FooItems` class, to declare an array of strings correlating to properties in the store's state. If you're from the Redux world, this is akin to "connecting" a consumer to a provider.
 
-Additionally, when this `subscribe` call is made, the `bindSubscriber` function will be called where this logic can be customized. E.g., assigning a default state value from state into the subscriber.
+Additionally, when this `subscribe` call is made, the `bindSubscriber` function will be called where the result of a subscription can be defined. E.g., assigning a default value from state into the subscriber.
 
 > In general, you should try to use a simple data structure as the second argument to `subscribe`; this ensures your state binding has consistent expectations.
 
@@ -199,4 +199,6 @@ fooBar.addToFoo("bop")
 
 Now when the button is clicked, `dispatch` will tell your store to begin the state update process.
 
-The next step being that your reducer might have logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to the store.
+The next step being that your reducer could have a logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to state, then returns it. Finally, the result would then be handed over to `bindState`.
+
+> Any data type can be used as the payload, however, much like in `subscribe`, it's best to keep it consistent so your reducer can have consistent assumptions.
