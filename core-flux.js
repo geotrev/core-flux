@@ -88,12 +88,7 @@ function setState(id, nextState = {}) {
  * @param {Function} updater
  * @returns {{dispatch: Function, subscribe: Function}}
  */
-export function createStore(
-  initialState,
-  reducer,
-  subscriptionsUpdated,
-  stateUpdated
-) {
+export function createStore(initialState, reducer, bindSubscriber, bindState) {
   const id = createId()
 
   Stores[id] = {}
@@ -105,7 +100,7 @@ export function createStore(
       const state = getState(id)
       const nextState = reducer(type, state, payload || {})
 
-      return stateUpdated(
+      return bindState(
         Stores[id].subscriptions,
         nextState,
         function (rawNextState) {
@@ -122,7 +117,7 @@ export function createStore(
 
       subscriptions.push([subscriber, request])
       const length = subscriptions.length
-      subscriptionsUpdated(subscriptions[length - 1], state)
+      bindSubscriber(subscriptions[length - 1], state)
     },
   }
 }
