@@ -155,8 +155,6 @@ Once a store is created, you'll be able to add subscriptions with `subscribe` an
 
 ### subscribe
 
-> **params:**<br/>- `subscriber`: the object to subscribe to your store.<br/>- `data`: data that describes the relationship between the subscriber and state.
-
 Adds a subscription to your store. It will always be tied to a single store, and subsequently state object.
 
 ```js
