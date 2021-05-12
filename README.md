@@ -1,5 +1,5 @@
 <h1 align="center">Core Flux</h1>
-<p align="center">0.5kb unopinionated flux utility. Use it to create stores, manage state data, and direct updates to subscribers.</p>
+<p align="center">0.5kb unopinionated flux utility. Control the flow of state data between subscribers.</p>
 <br>
 <p align="center">
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
@@ -56,9 +56,9 @@ The CDN puts the library on `window.CoreFlux`.
 
 ### Data model
 
-Core Flux has a relatively simple data model that will come into play when writing bindings.
+Core Flux has a relatively simple data model that you should understand when writing state bindings.
 
-Here is how a store would look in memory:
+Here is how state looks in all cases:
 
 ```js
 Store {
@@ -73,9 +73,9 @@ Store {
 }
 ```
 
-Each subscription contains a `subscriber` and some form of `data` that informs a relationship between `state` and `subscriber`. See [`createStore`](#createstore) on how to add subscriptions.
+Each item in `subscriptions` contains a `subscriber` and some form of `data` that informs a relationship between `state` and `subscriber`. See [`createStore`](#createstore) on how to add subscriptions.
 
-Keep this data model in mind when adding new subscriptions and creating bindings.
+`state` is the object you define as your store's initial state value.
 
 ### createStore
 
@@ -87,51 +87,11 @@ The function **requires** all four of its arguments, as shown here:
 // foo-store.js
 
 import { createStore } from "core-flux"
+import { reducer, bindSubscriber, bindState } from "./foo-bindings"
 
 const initialState = {
   foo: [],
   bar: { baz: 0, beep: "hello" },
-}
-
-/**
- * Receives a `payload` and returns a new version
- * of `state` based on the given `type`.
- *
- * @param {string} type
- * @param {object} state
- * @param {*={}} payload
- * @returns {object} state
- */
-function reducer(type, state, payload) {
-  // ...
-}
-
-/**
- * Receives a new subscription as provided by the `subscribe`
- * function, along with the current state. The subscription
- * will have been automatically added to the store when this
- * function is called.
- *
- * @param {[object, *]} newSubscription - a tuple containing the new subscriber and its data
- * @param {object} state - immutable copy of state
- */
-function bindSubscriber(newSubscription, state) {
-  // ...
-}
-
-/**
- * Receives the next version of state for binding to the
- * store and/or subscribers. Unlike `bindSubscriber`, this
- * function does not automatically update the store's state
- * object beforehand, and requires you to manually do so
- * via the `setState` helper.
- *
- * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
- * @param {object} nextState - the version of state given by your reducer.
- * @param {Function} setState - function that takes your state object and assigns it back to the store.
- */
-function bindState(subscriptions, nextState, setState) {
-  // ...
 }
 
 const { subscribe, dispatch } = createStore(
@@ -142,6 +102,53 @@ const { subscribe, dispatch } = createStore(
 )
 
 export { subscribe, dispatch }
+```
+
+here's a breakdown of each binding needed when initializing a new store:
+
+```js
+/**
+  * Receives a `payload` and returns a new version
+  * of `state` based on the given `type`. Similar to
+  * the likes of redux and other tools.
+  *
+  * @param {string} type
+  * @param {object} state
+  * @param {object={}} payload
+  * @returns {object} state
+  */
+function reducer(type, state, payload) {
+  // ...
+}
+
+/**
+  * Receives a new subscription as provided by the `subscribe`
+  * function, along with the current state. The subscription
+  * will have been automatically added to the store when this
+  * function is called.
+  *
+  * @param {[object, *]} subscription - a tuple containing the new subscriber and its data
+  * @param {object} state - immutable copy of state
+  */
+function bindSubscriber(subscription, state) {
+  // ...
+}
+
+/**
+  * Bind the new state value to your subscribers.
+  * 
+  * Receives the next version of state. Unlike `bindSubscriber`, 
+  * this function does not automatically update the store
+  * beforehand, and requires you to manually do so
+  * via the `setState` helper.
+  *
+  * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
+  * @param {object} nextState - the version of state given by your reducer.
+  * @param {Function} setState - function that takes your state object and assigns it back to the store.
+  */
+function bindState(subscriptions, nextState, setState) {
+  // ...
+}
 ```
 
 Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
@@ -168,7 +175,7 @@ In the above example, we've designed our subscriber, the `FooItems` class, to de
 
 Additionally, when this `subscribe` call is made, the `bindSubscriber` function will be called where the result of a subscription can be defined. E.g., assigning a default value from state into the subscriber.
 
-> In general, you should try to use a simple data structure as the second argument to `subscribe`; this ensures your state binding has consistent expectations.
+> In general, you should try to use a simple data structure as the second argument to `subscribe`; this ensures your bindings have generic and consistent expectations.
 
 ### dispatch
 
