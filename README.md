@@ -127,7 +127,7 @@ function reducer(type, state, payload) {
   * will have been automatically added to the store when this
   * function is called.
   *
-  * @param {[object, *]} subscription - a tuple containing the new subscriber and its data
+  * @param {[object, *]} subscription
   * @param {object} state - immutable copy of state
   */
 function bindSubscriber(subscription, state) {
@@ -142,9 +142,9 @@ function bindSubscriber(subscription, state) {
   * beforehand, and requires you to manually do so
   * via the `setState` helper.
   *
-  * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
+  * @param {Array.<[object, *]>} subscriptions - array of all subscriptions
   * @param {object} nextState - the version of state given by your reducer.
-  * @param {Function} setState - function that takes your state object and assigns it back to the store.
+  * @param {Function} setState - receives new state and binds it to the Store
   */
 function bindState(subscriptions, nextState, setState) {
   // ...
