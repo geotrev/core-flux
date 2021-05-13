@@ -104,7 +104,9 @@ const { subscribe, dispatch } = createStore(
 export { subscribe, dispatch }
 ```
 
-here's a breakdown of each binding needed when initializing a new store:
+Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
+
+Here's a breakdown of each binding needed when initializing a new store:
 
 ```js
 /**
@@ -150,8 +152,6 @@ function bindState(subscriptions, nextState, setState) {
   // ...
 }
 ```
-
-Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
 
 ### subscribe
 
@@ -204,7 +204,7 @@ const fooBar = new FooItems()
 fooBar.addToFoo("bop")
 ```
 
-Now when the `addItem` method is clicked, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
+Now when the `addItem` method is called, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
 
 The next step being that your reducer could have a logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to state, then returns the resulting new state. 
 
