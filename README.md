@@ -143,8 +143,8 @@ function bindSubscriber(subscription, state) {
   * via the `setState` helper.
   *
   * @param {Array.<[object, *]>} subscriptions - array of all subscriptions
-  * @param {object} nextState - the version of state given by your reducer.
-  * @param {Function} setState - receives new state and binds it to the Store
+  * @param {object} nextState - the version of state given by your reducer
+  * @param {Function} setState - binds state to the store
   */
 function bindState(subscriptions, nextState, setState) {
   // ...
