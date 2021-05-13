@@ -104,7 +104,9 @@ const { subscribe, dispatch } = createStore(
 export { subscribe, dispatch }
 ```
 
-here's a breakdown of each binding needed when initializing a new store:
+Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
+
+Here's a breakdown of each binding needed when initializing a new store:
 
 ```js
 /**
@@ -127,7 +129,7 @@ function reducer(type, state, payload) {
   * will have been automatically added to the store when this
   * function is called.
   *
-  * @param {[object, *]} subscription - a tuple containing the new subscriber and its data
+  * @param {[object, *]} subscription
   * @param {object} state - immutable copy of state
   */
 function bindSubscriber(subscription, state) {
@@ -142,16 +144,14 @@ function bindSubscriber(subscription, state) {
   * beforehand, and requires you to manually do so
   * via the `setState` helper.
   *
-  * @param {Array.<[object, *]>} subscriptions - array of subscriptions to your store
-  * @param {object} nextState - the version of state given by your reducer.
-  * @param {Function} setState - function that takes your state object and assigns it back to the store.
+  * @param {Array.<[object, *]>} subscriptions - array of all subscriptions
+  * @param {object} nextState - the version of state given by your reducer
+  * @param {Function} setState - binds state to the store
   */
 function bindState(subscriptions, nextState, setState) {
   // ...
 }
 ```
-
-Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
 
 ### subscribe
 
@@ -204,7 +204,7 @@ const fooBar = new FooItems()
 fooBar.addToFoo("bop")
 ```
 
-Now when the `addItem` method is clicked, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
+Now when the `addItem` method is called, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
 
 The next step being that your reducer could have a logic branch on the action type called `ADD_FOO_ITEM` which adds the given item to state, then returns the resulting new state. 
 
