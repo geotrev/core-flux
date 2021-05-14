@@ -196,7 +196,7 @@ class FooItems {
   }
 
   set addItem(item) {
-    dispatch("ADD_FOO_ITEM", { item })
+    dispatch("ADD_ITEM", { item })
   }
 }
 
