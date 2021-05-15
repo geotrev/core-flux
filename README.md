@@ -39,16 +39,16 @@ The CDN puts the library on `window.CoreFlux`.
 <!-- The unminified bundle for development -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.7/dist/core-flux.js"
-  integrity="sha256-dLB29xsPTHfeIag/xAGHE003gzIJXKMHAdAr7vghHVI="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.8/dist/core-flux.js"
+  integrity="sha256-TCKYuwkGWgcQfQo/Zgmyi4iWGQc0MpxiH7u3dkw8cYQ="
   crossorigin="anonymous"
 ></script>
 
 <!-- Minified/uglified bundle for production -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.7/dist/core-flux.min.js"
-  integrity="sha256-yxelU39ZPLOF4qZwwdhHCOhoazFQPv5Z70FcHI89x2g="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.8/dist/core-flux.min.js"
+  integrity="sha256-GkyVkyElHTpRsSZtx4eOlrIU80RWxK3UAMJp4ssqz0k="
   crossorigin="anonymous"
 ></script>
 ```
