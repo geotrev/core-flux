@@ -13,10 +13,11 @@
 
 - [Install](#install)
 - [API](#api)
-  - [Data model](#data-model)
   - [`createStore()`](#createstore)
   - [`subscribe()`](#subscribe)
   - [`dispatch()`](#dispatch)
+- [Data model](#data-model)
+- [Data flow](#data-flow)
 
 ## Install
 
@@ -38,46 +39,23 @@ The CDN puts the library on `window.CoreFlux`.
 <!-- The unminified bundle for development -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.7/dist/core-flux.js"
-  integrity="sha256-dLB29xsPTHfeIag/xAGHE003gzIJXKMHAdAr7vghHVI="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.8/dist/core-flux.js"
+  integrity="sha256-TCKYuwkGWgcQfQo/Zgmyi4iWGQc0MpxiH7u3dkw8cYQ="
   crossorigin="anonymous"
 ></script>
 
 <!-- Minified/uglified bundle for production -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.7/dist/core-flux.min.js"
-  integrity="sha256-yxelU39ZPLOF4qZwwdhHCOhoazFQPv5Z70FcHI89x2g="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.8/dist/core-flux.min.js"
+  integrity="sha256-GkyVkyElHTpRsSZtx4eOlrIU80RWxK3UAMJp4ssqz0k="
   crossorigin="anonymous"
 ></script>
 ```
 
 ## API
 
-### Data model
-
-Core Flux has a relatively simple data model that you should understand when writing state bindings.
-
-Here is how state looks in all cases:
-
-```js
-Store {
-  state: { ... },
-
-  subscriptions: [
-    [subscriber, data],
-    [subscriber, data],
-    [subscriber, data],
-    // ...
-  ]
-}
-```
-
-Each item in `subscriptions` contains a `subscriber` and some form of `data` that informs a relationship between `state` and `subscriber`. See [`createStore`](#createstore) on how to add subscriptions.
-
-`state` is the object you define as your store's initial state value.
-
-### createStore
+### `createStore(initialSate, reducer, bindSubscriber, bindState)`
 
 The one and only export of Core Flux. Use it to create a store instance. You can create as few or as many stores as your heart desires! They will all be independent from one another.
 
@@ -108,50 +86,23 @@ Once a store is created, you'll be able to add subscriptions with `subscribe` an
 
 Here's a breakdown of each binding needed when initializing a new store:
 
-```js
-/**
-  * Receives a `payload` and returns a new version
-  * of `state` based on the given `type`. Similar to
-  * the likes of redux and other tools.
-  *
-  * @param {string} type
-  * @param {object} state
-  * @param {object={}} payload
-  * @returns {object} state
-  */
-function reducer(type, state, payload) {
-  // ...
-}
+#### `reducer(type, state, payload = {})`
 
-/**
-  * Receives a new subscription as provided by the `subscribe`
-  * function, along with the current state. The subscription
-  * will have been automatically added to the store when this
-  * function is called.
-  *
-  * @param {[object, *]} subscription
-  * @param {object} state - immutable copy of state
-  */
-function bindSubscriber(subscription, state) {
-  // ...
-}
+> `type (string)`: The action dispatched.<br/>`state (object)`: A copy of the current state object.<br/>`payload (object={})`: The payload given during dispatch.
 
-/**
-  * Bind the new state value to your subscribers.
-  * 
-  * Receives the next version of state. Unlike `bindSubscriber`, 
-  * this function does not automatically update the store
-  * beforehand, and requires you to manually do so
-  * via the `setState` helper.
-  *
-  * @param {Array.<[object, *]>} subscriptions - array of all subscriptions
-  * @param {object} nextState - the version of state given by your reducer
-  * @param {Function} setState - binds state to the store
-  */
-function bindState(subscriptions, nextState, setState) {
-  // ...
-}
-```
+Creates a new version of state and returns it, based on the `type` and `payload`. If the return value is falsy, nothing happens.
+
+#### `bindSubscriber(subscription, state)`
+
+> `subscription (array)`: A tuple containing the subscribed object and its relational data.<br/>`state (object)`: A copy of the current state object.
+
+Called after a new `subscribe` call is made and a subscription has been added to the store. Use it to set initial state on the new subscriber.
+
+#### `bindState(subscriptions, nextState, setState)`
+
+> `subscriptions (subscription[])`: An array containing all subscriptions.<br/>`nextState (object)`: The state object as returned by the reducer.<br/>`setState (function)`:
+
+Called after the reducer has processed the next state value. Use it to set the new state back to subscribers **and** back to the store.
 
 ### subscribe
 
@@ -195,8 +146,8 @@ class FooItems {
     return this.foo
   }
 
-  set addItem(item) {
-    dispatch("ADD_FOO_ITEM", { item })
+  addItem(item) {
+    dispatch("ADD_ITEM", { item })
   }
 }
 
@@ -206,8 +157,37 @@ fooBar.addItem("bop")
 
 Now when the `addItem` method is called, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
 
-The next step being that your reducer could have a logic branch on the action type called `ADD_ITEM` which adds the given item to state, then returns the resulting new state. 
+The next step being that your reducer could have a logic branch on the action type called `ADD_ITEM` which adds the given item to state, then returns the resulting new state (containing the full items list).
 
 Finally, the result would then be handed over to `bindState`.
 
 > Any data type can be used as the payload, however, much like in `subscribe`, it's best to keep your data consistent so your reducer can have reliable expectations.
+
+## Data model
+
+Core Flux has a relatively simple data model that you should understand when creating your bindings.
+
+Here is how state looks in all cases:
+
+```js
+Store {
+  state: { ... },
+  subscriptions: [
+    [subscriber, data],
+    [subscriber, data],
+    [subscriber, data],
+    // ...
+  ]
+}
+```
+
+Each item in `subscriptions` contains a `subscriber` and some form of `data` that informs a relationship between `state` and `subscriber`.
+
+NOTE: You define `data` in the above model, be it an object, array, string; it can be anything you want. Ultimately, you're responsible for communicating state relationships to subscribers.
+
+## Data flow
+
+Here is the general lifecycle of subscribing to the store & dispatching a state update.
+
+- `subscribe` > `bindSubscriber`
+- `dispatch` > `reducer` > `bindState`
