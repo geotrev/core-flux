@@ -146,7 +146,7 @@ class FooItems {
     return this.foo
   }
 
-  set addItem(item) {
+  addItem(item) {
     dispatch("ADD_ITEM", { item })
   }
 }
@@ -157,7 +157,7 @@ fooBar.addItem("bop")
 
 Now when the `addItem` method is called, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
 
-The next step being that your reducer could have a logic branch on the action type called `ADD_ITEM` which adds the given item to state, then returns the resulting new state.
+The next step being that your reducer could have a logic branch on the action type called `ADD_ITEM` which adds the given item to state, then returns the resulting new state (containing the full items list).
 
 Finally, the result would then be handed over to `bindState`.
 
