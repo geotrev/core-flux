@@ -1,51 +1,123 @@
 import { createStore } from "../core-flux"
 
-const testBindState = jest.fn()
-const testBindSubscriber = jest.fn()
-const testReducer = jest.fn()
+const mockBindState = jest.fn()
+const mockBindSubscriber = jest.fn()
+const mockReducer = jest.fn()
+
+const dataObj = "variable test data"
+const subscriberObj = {}
+
+function testReducer(state, action) {
+  if (action.type === "TEST_TYPE") {
+    state.foo = action.payload.foo
+    return state
+  }
+}
+
+function testBindState(_, reducedState, setState) {
+  setState(reducedState)
+}
+
+function getMockStore() {
+  return createStore({}, mockReducer, mockBindSubscriber, mockBindState)
+}
 
 describe("createStore", () => {
-  let store,
-    data = "data",
-    subscriber = {},
-    type = "TEST_TYPE",
-    payload = {}
+  describe("artifacts", () => {
+    it("returns dispatch and subscribe helper functions", () => {
+      // Given
+      const store = getMockStore()
 
-  beforeAll(() => {
-    store = createStore({}, testReducer, testBindSubscriber, testBindState)
+      // Then
+      expect(store).toEqual(expect.any(Object))
+      expect(store.dispatch).toEqual(expect.any(Function))
+      expect(store.subscribe).toEqual(expect.any(Function))
+    })
+
+    it("returns live data pointer", () => {
+      // Given
+      const store = getMockStore()
+
+      // Then
+      expect(store.__data).toEqual(
+        expect.objectContaining({ state: {}, subscriptions: [] })
+      )
+    })
   })
 
-  it("creates dispatch and subscribe helper functions", () => {
-    expect(store).toEqual(expect.any(Object))
-    expect(store.dispatch).toEqual(expect.any(Function))
-    expect(store.subscribe).toEqual(expect.any(Function))
+  describe("state bindings", () => {
+    const TEST_TYPE = "TEST_TYPE"
+    const payload = { foo: "bar" }
+
+    it("calls reducer on dispatch", () => {
+      //  Given
+      const store = getMockStore()
+
+      // When
+      store.dispatch(TEST_TYPE, payload)
+
+      // Then
+      expect(mockReducer).toBeCalledWith(
+        expect.any(Object),
+        expect.objectContaining({ payload, type: TEST_TYPE })
+      )
+    })
+
+    it("calls state binding on dispatch", () => {
+      //  Given
+      const store = createStore(
+        {},
+        testReducer,
+        mockBindSubscriber,
+        mockBindState
+      )
+
+      // When
+      store.subscribe(subscriberObj, dataObj)
+      store.dispatch(TEST_TYPE, payload)
+
+      // Then
+      expect(mockBindState).toBeCalledWith(
+        expect.arrayContaining([
+          expect.arrayContaining([subscriberObj, dataObj]),
+        ]),
+        { foo: "bar" },
+        expect.any(Function)
+      )
+    })
+
+    it("sets reduced state back to store using setState helper", () => {
+      // Given
+      const store = createStore(
+        {},
+        testReducer,
+        mockBindSubscriber,
+        testBindState
+      )
+
+      // When
+      store.dispatch(TEST_TYPE, payload)
+
+      // Then
+      expect(store.__data.state).toEqual(
+        expect.objectContaining({ foo: "bar" })
+      )
+    })
   })
 
-  it("calls subscriber binding when subscription is added", () => {
-    store.subscribe(subscriber, data)
+  describe("subscriber bindings", () => {
+    it("calls subscriber binding when subscribe is called", () => {
+      // Given
+      const store = getMockStore()
 
-    expect(testBindSubscriber).toBeCalledWith(
-      expect.arrayContaining([subscriber, data]),
-      expect.any(Object)
-    )
-  })
+      // When
+      store.subscribe(subscriberObj, dataObj)
 
-  it("calls reducer when dispatch is made", () => {
-    store.dispatch(type, payload)
-
-    expect(testReducer).toBeCalledWith(
-      expect.any(Object),
-      expect.objectContaining({ type, payload })
-    )
-  })
-
-  it("calls state binding when dispatch is made", () => {
-    store.dispatch(type, payload)
-
-    expect(testBindState).toBeCalledWith(
-      expect.arrayContaining([expect.arrayContaining([subscriber, data])]),
-      undefined,
-      expect.any(Function)
-    )
+      // Then
+      expect(mockBindSubscriber).toBeCalledWith(
+        expect.arrayContaining([subscriberObj, dataObj]),
+        expect.any(Object)
+      )
+    })
   })
 })

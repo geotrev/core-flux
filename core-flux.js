@@ -103,17 +103,17 @@ export function createStore(
         }
       )
     },
-    subscribe(subscriber, request) {
-      if (!subscriber || !request) {
+    subscribe(subscriber, data) {
+      if (!subscriber || !data) {
         return
       }
 
       const { subscriptions, state } = Stores[id]
 
-      subscriptions.push([subscriber, request])
+      subscriptions.push([subscriber, data])
       const length = subscriptions.length
       bindSubscriber(subscriptions[length - 1], state)
     },
-    // data: Stores[id],
+    __data: Stores[id],
   }
 }

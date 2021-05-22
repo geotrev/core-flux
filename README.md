@@ -1,5 +1,5 @@
 <h1 align="center">Core Flux</h1>
-<p align="center">0.5kb unopinionated flux utility. Control the flow of state data between subscribers.</p>
+<p align="center">0.5kb functional flux utility. Control the flow of state data between subscribers.</p>
 <br>
 <p align="center">
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
@@ -16,6 +16,7 @@
   - [`createStore()`](#createstore)
   - [`subscribe()`](#subscribe)
   - [`dispatch()`](#dispatch)
+- [Exposing the store](#exposing-the-store)
 - [Data model](#data-model)
 - [Data flow](#data-flow)
 
@@ -55,7 +56,7 @@ The CDN puts the library on `window.CoreFlux`.
 
 ## API
 
-### `createStore(initialSate, reducer, bindSubscriber, bindState)`
+<h3 id="createstore"><code>createStore(initialSate, reducer, bindSubscriber, bindState)</code></h3>
 
 The one and only export of Core Flux. Use it to create a store instance. You can create as few or as many stores as your heart desires! They will all be independent from one another.
 
@@ -84,27 +85,29 @@ export { subscribe, dispatch }
 
 Once a store is created, you'll be able to add subscriptions with `subscribe` and request state updates with `dispatch`.
 
+#### Bindings
+
 Here's a breakdown of each binding needed when initializing a new store:
 
-#### `reducer(state, { type, payload } = action)`
+**`reducer(state, action)`**
 
-> `state (object)`: A copy of the current state object.<br/>`action ({ type, payload })`: The dispatched action type and its payload.
+> `state (object)`: A _copy_ of the current state object.<br/>`action ({ type: string, payload: object })`: The dispatched action type and its payload.
 
-Creates a new version of state and returns it, based on the `type` and `payload`. If the return value is falsy, nothing happens.
+Creates a new version of state and returns it, based on the `type` and `payload`. If the return value is falsy, the update process ends.
 
-#### `bindSubscriber(subscription, state)`
+**`bindSubscriber(newSubscription, state)`**
 
-> `subscription (array)`: A tuple containing the subscribed object and its relational data.<br/>`state (object)`: A copy of the current state object.
+> `newSubscription ([subscriber, data])`: A tuple containing the subscribed object and its state-relational data.<br/>`state (object)`: A _copy_ of the current state object.
 
-Called after a new `subscribe` call is made and a subscription has been added to the store. Use it to set initial state on the new subscriber.
+Called after a new `subscribe` call is made and a subscription has been added to the store. Use it to set initial state on the new subscriber based on the `data` defined by your subscriber.
 
-#### `bindState(subscriptions, nextState, setState)`
+**`bindState(subscriptions, reducedState, setState)`**
 
-> `subscriptions (subscription[])`: An array containing all subscriptions.<br/>`nextState (object)`: The state object as returned by the reducer.<br/>`setState (function)`:
+> `subscriptions (subscription[])`: An array containing all subscriptions.<br/>`reducedState (object)`: The state object as returned by the reducer.<br/>`setState (function)`:
 
-Called after the reducer has processed the next state value. Use it to set the new state back to subscribers **and** back to the store.
+Called after the reducer has processed the next state value. Use it to set the reduced state back to subscribers **and** back to the store.
 
-### subscribe
+<h3 id="subscribe"><code>subscribe(subscriber, data)</code></h3>
 
 Adds a subscription to your store. It will always be tied to a single store, and subsequently state object.
 
@@ -122,20 +125,20 @@ class FooItems {
 }
 ```
 
-In the above example, we've designed our subscriber, the `FooItems` class, to declare an array of strings correlating to properties in the store's state. If you're from the Redux world, this is akin to "connecting" a consumer to a provider.
+In the above example, we've designed the subscriber, the `FooItems` class, to declare an array of strings correlating to properties in the store's state. If you're from the Redux world, this is akin to "connecting" a consumer to a provider via higher-order function/component.
 
-Additionally, when this `subscribe` call is made, the `bindSubscriber` function will be called where the result of a subscription can be defined. E.g., assigning a default value from state into the subscriber.
+After the subscribe call is made, your `bindSubscriber` function will be called where you can pass along the default values as you see fit.
 
 > In general, you should try to use a simple data structure as the second argument to `subscribe`; this ensures your bindings have generic and consistent expectations.
 
-### dispatch
+<h3 id="dispatch"><code>dispatch(type, payload)</code></h3>
 
-Let's say you have some subscriptions in your store. How do you kick off a state update for subscribers? That's where `dispatch` comes into play.
+Requests a state change in your store.
 
-Let's extend the previous example:
+We can extend the previous example with a setter to call `dispatch`:
 
 ```js
-import { subscribe } from "./foo-store"
+import { subscribe, dispatch } from "./foo-store"
 
 class FooItems {
   constructor() {
@@ -155,13 +158,25 @@ const fooBar = new FooItems()
 fooBar.addItem("bop")
 ```
 
-Now when the `addItem` method is called, `dispatch` will tell your store to begin the state update process. Your reducer receives the action type and payload.
+Now when the `addItem` method is called, Core Flux will pass along the action type and payload to your reducer.
 
-The next step being that your reducer could have a logic branch on the action type called `ADD_ITEM` which adds the given item to state, then returns the resulting new state (containing the full items list).
+The reducer could have a logic branch on the action type called `ADD_ITEM` which adds the given item to state, then returns the resulting new state (containing the full items list).
 
-Finally, the result would then be handed over to `bindState`.
+Finally, the result would then be handed over to your `bindState` binding.
 
-> Any data type can be used as the payload, however, much like in `subscribe`, it's best to keep your data consistent so your reducer can have reliable expectations.
+> Much like in `subscribe`, it's best to maintain data types in the payload so your reducer can have consistent expectations.
+
+## Exposing the store
+
+For utility or debugging reasons, you may want to look at the store you're working with. To do so, you can use the `__data` property when creating a store.
+
+```js
+const fooStore = createStore(initialState, reducer, bindSubscriber, bindState)
+
+window.fooStoreData = fooStore.__data
+
+console.log(window.fooStoreData) // { state: {...}, subscriptions: [...] }
+```
 
 ## Data model
 
