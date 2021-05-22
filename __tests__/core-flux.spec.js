@@ -4,8 +4,8 @@ const mockBindState = jest.fn()
 const mockBindSubscriber = jest.fn()
 const mockReducer = jest.fn()
 
-const dataObj = "variable test data"
-const subscriberObj = {}
+const testSubscriberData = "variable test data"
+const testSubscriber = {}
 
 function testReducer(state, action) {
   if (action.type === "TEST_TYPE") {
@@ -26,20 +26,20 @@ describe("createStore", () => {
   describe("artifacts", () => {
     it("returns dispatch and subscribe helper functions", () => {
       // Given
-      const store = getMockStore()
+      const Store = getMockStore()
 
       // Then
-      expect(store).toEqual(expect.any(Object))
-      expect(store.dispatch).toEqual(expect.any(Function))
-      expect(store.subscribe).toEqual(expect.any(Function))
+      expect(Store).toEqual(expect.any(Object))
+      expect(Store.dispatch).toEqual(expect.any(Function))
+      expect(Store.subscribe).toEqual(expect.any(Function))
     })
 
     it("returns live data pointer", () => {
       // Given
-      const store = getMockStore()
+      const Store = getMockStore()
 
       // Then
-      expect(store.__data).toEqual(
+      expect(Store.__data).toEqual(
         expect.objectContaining({ state: {}, subscriptions: [] })
       )
     })
@@ -47,25 +47,25 @@ describe("createStore", () => {
 
   describe("state bindings", () => {
     const TEST_TYPE = "TEST_TYPE"
-    const payload = { foo: "bar" }
+    const testPayload = { foo: "bar" }
 
     it("calls reducer on dispatch", () => {
       //  Given
-      const store = getMockStore()
+      const Store = getMockStore()
 
       // When
-      store.dispatch(TEST_TYPE, payload)
+      Store.dispatch(TEST_TYPE, testPayload)
 
       // Then
       expect(mockReducer).toBeCalledWith(
-        expect.any(Object),
-        expect.objectContaining({ payload, type: TEST_TYPE })
+        Store.__data.state,
+        expect.objectContaining({ payload: testPayload, type: TEST_TYPE })
       )
     })
 
     it("calls state binding on dispatch", () => {
       //  Given
-      const store = createStore(
+      const Store = createStore(
         {},
         testReducer,
         mockBindSubscriber,
@@ -73,22 +73,20 @@ describe("createStore", () => {
       )
 
       // When
-      store.subscribe(subscriberObj, dataObj)
-      store.dispatch(TEST_TYPE, payload)
+      Store.subscribe(testSubscriber, testSubscriberData)
+      Store.dispatch(TEST_TYPE, testPayload)
 
       // Then
       expect(mockBindState).toBeCalledWith(
-        expect.arrayContaining([
-          expect.arrayContaining([subscriberObj, dataObj]),
-        ]),
-        { foo: "bar" },
+        Store.__data.subscriptions,
+        expect.objectContaining({ foo: "bar" }),
         expect.any(Function)
       )
     })
 
-    it("sets reduced state back to store using setState helper", () => {
+    it("sets reduced state back to store.state using setState helper", () => {
       // Given
-      const store = createStore(
+      const Store = createStore(
         {},
         testReducer,
         mockBindSubscriber,
@@ -96,10 +94,10 @@ describe("createStore", () => {
       )
 
       // When
-      store.dispatch(TEST_TYPE, payload)
+      Store.dispatch(TEST_TYPE, testPayload)
 
       // Then
-      expect(store.__data.state).toEqual(
+      expect(Store.__data.state).toEqual(
         expect.objectContaining({ foo: "bar" })
       )
     })
@@ -108,15 +106,30 @@ describe("createStore", () => {
   describe("subscriber bindings", () => {
     it("calls subscriber binding when subscribe is called", () => {
       // Given
-      const store = getMockStore()
+      const Store = getMockStore()
 
       // When
-      store.subscribe(subscriberObj, dataObj)
+      Store.subscribe(testSubscriber, testSubscriberData)
 
       // Then
       expect(mockBindSubscriber).toBeCalledWith(
-        expect.arrayContaining([subscriberObj, dataObj]),
-        expect.any(Object)
+        Store.__data.subscriptions[0],
+        Store.__data.state
+      )
+    })
+
+    it("adds subscription to store.subscriptions", () => {
+      // Given
+      const Store = getMockStore()
+
+      // When
+      Store.subscribe(testSubscriber, testSubscriberData)
+
+      // Then
+      expect(Store.__data.subscriptions).toEqual(
+        expect.arrayContaining([
+          expect.arrayContaining([testSubscriber, testSubscriberData]),
+        ])
       )
     })
   })
