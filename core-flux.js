@@ -29,40 +29,30 @@ function clone(obj) {
   const isArray = Array.isArray(obj)
 
   let value,
-    newObj = isArray ? [] : {}
+    copyObj = isArray ? [] : {}
 
   if (isArray) {
     let length = obj.length,
       idx = -1
     while (++idx < length) {
-      newObj[idx] = obj[idx]
+      copyObj[idx] = obj[idx]
     }
   } else {
     for (const key in obj) {
       value = obj[key]
-      newObj[key] = newObj[key] =
+      copyObj[key] = copyObj[key] =
         value === null ? null : typeof value === "object" ? clone(value) : value
     }
   }
 
-  return newObj
+  return copyObj
 }
 
-/**
- * Append a new state object to a Store.
- * @param {string} id
- * @param {{}} initialState
- */
-function initState(id, initialState = {}) {
-  Stores[id].state = initialState
-}
-
-/**
- * Append a new subscriber array to a Store.
- * @param {string} id
- */
-function initSubscriptions(id) {
-  Stores[id].subscriptions = []
+function setInitialStore(id, initialState) {
+  Stores[id] = {
+    state: initialState,
+    subscriptions: [],
+  }
 }
 
 /**
@@ -88,21 +78,26 @@ function setState(id, nextState = {}) {
  * @param {Function} updater
  * @returns {{dispatch: Function, subscribe: Function}}
  */
-export function createStore(initialState, reducer, bindSubscriber, bindState) {
+export function createStore(
+  initialState = {},
+  reducer,
+  bindSubscriber,
+  bindState
+) {
   const id = createId()
-
-  Stores[id] = {}
-  initState(id, initialState)
-  initSubscriptions(id)
+  setInitialStore(id, initialState)
 
   return {
     dispatch(type, payload) {
       const state = getState(id)
-      const nextState = reducer(type, state, payload || {})
+      const reducedState = reducer(state, {
+        type,
+        payload: payload || {},
+      })
 
       return bindState(
         Stores[id].subscriptions,
-        nextState,
+        reducedState,
         function (rawNextState) {
           return setState(id, rawNextState)
         }
@@ -119,5 +114,6 @@ export function createStore(initialState, reducer, bindSubscriber, bindState) {
       const length = subscriptions.length
       bindSubscriber(subscriptions[length - 1], state)
     },
+    // data: Stores[id],
   }
 }

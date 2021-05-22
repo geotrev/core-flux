@@ -86,9 +86,9 @@ Once a store is created, you'll be able to add subscriptions with `subscribe` an
 
 Here's a breakdown of each binding needed when initializing a new store:
 
-#### `reducer(type, state, payload = {})`
+#### `reducer(state, { type, payload } = action)`
 
-> `type (string)`: The action dispatched.<br/>`state (object)`: A copy of the current state object.<br/>`payload (object={})`: The payload given during dispatch.
+> `state (object)`: A copy of the current state object.<br/>`action ({ type, payload })`: The dispatched action type and its payload.
 
 Creates a new version of state and returns it, based on the `type` and `payload`. If the return value is falsy, nothing happens.
 
