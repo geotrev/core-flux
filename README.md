@@ -1,5 +1,5 @@
 <h1 align="center">Core Flux</h1>
-<p align="center">0.5kb functional flux utility. Control the flow of state data between subscribers.</p>
+<p align="center">½kb functional flux utility. Control the flow of state data between subscribers.</p>
 <br>
 <p align="center">
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
