@@ -1,5 +1,5 @@
 <h1 align="center">Core Flux</h1>
-<p align="center">0.5kb functional flux utility. Control the flow of state data between subscribers.</p>
+<p align="center">½kb functional flux utility. Control the flow of state data between subscribers.</p>
 <br>
 <p align="center">
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
@@ -40,16 +40,16 @@ The CDN puts the library on `window.CoreFlux`.
 <!-- The unminified bundle for development -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.8/dist/core-flux.js"
-  integrity="sha256-TCKYuwkGWgcQfQo/Zgmyi4iWGQc0MpxiH7u3dkw8cYQ="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.1.0/dist/core-flux.js"
+  integrity="sha256-Wu1e80Ncp28IBDil/BBiZFPmhlAFHnjgJpAw2kHpCEU="
   crossorigin="anonymous"
 ></script>
 
 <!-- Minified/uglified bundle for production -->
 <script
   type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/core-flux@1.0.8/dist/core-flux.min.js"
-  integrity="sha256-GkyVkyElHTpRsSZtx4eOlrIU80RWxK3UAMJp4ssqz0k="
+  src="https://cdn.jsdelivr.net/npm/core-flux@1.1.0/dist/core-flux.min.js"
+  integrity="sha256-CRbAMla4kdBDdcTQaGrlAr8Ces47xYF7qSqpqKuR41c="
   crossorigin="anonymous"
 ></script>
 ```

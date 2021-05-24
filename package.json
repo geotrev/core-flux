@@ -1,13 +1,13 @@
 {
   "name": "core-flux",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Manage your own state.",
   "main": "lib/core-flux.cjs.min.js",
   "module": "lib/core-flux.es.min.js",
   "browser": "dist/core-flux.min.js",
   "type": "module",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
     "watch": "rollup -c rollup.config.demo.js -w",
     "build": "BABEL_ENV=build rollup -c",
