@@ -10,6 +10,7 @@ debug.log
 __tests__/
 
 # configs
+.circleci
 .browserslistrc
 .eslintignore
 .eslintrc.json
