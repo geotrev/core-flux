@@ -1,7 +1,7 @@
 {
   "name": "core-flux",
   "version": "1.1.1",
-  "description": "Manage your own state.",
+  "description": "½kb functional flux utility. Control the flow of state data between subscribers.",
   "main": "lib/core-flux.cjs.js",
   "module": "lib/core-flux.es.js",
   "browser": "dist/core-flux.js",
