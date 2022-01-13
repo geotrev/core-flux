@@ -9,7 +9,7 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
 </p>
 
-[See a demo of Core Flux in action!](https://upgraded-todo.netlify.com)
+[See a demo of Core Flux in action!](https://todo-rotom.netlify.app/)
 
 - [Install](#install)
 - [API](#api)
