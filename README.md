@@ -6,7 +6,7 @@
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/l/core-flux.svg?sanitize=true" alt="License"></a>
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/circleci/github/geotrev/core-flux/main" alt="Circle CI status (main)" /></a>
   <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/bundlephobia/minzip/core-flux" alt="bundle size" /></a>
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
+  <a href="https://www.libraries.io/npm/core-flux"><img src="https://img.shields.io/librariesio/release/npm/core-flux" alt="dependency status" /></a>
 </p>
 
 [See a demo of Core Flux in action!](https://todo-rotom.netlify.app/)
