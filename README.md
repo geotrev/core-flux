@@ -41,7 +41,7 @@ The CDN puts the library on `window.CoreFlux`.
 <script
   type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/core-flux@1.1.2/dist/core-flux.js"
-  integrity="sha256-isekfT8KIOjq9Qbg9+xiIT9uAaLRByy2LrAqmKoc3Cs="
+  integrity="sha256-Y+g9GCtq8KHT4MKlSea9sJwwRkfXieYODF9RbKi+IZc="
   crossorigin="anonymous"
 ></script>
 
@@ -49,7 +49,7 @@ The CDN puts the library on `window.CoreFlux`.
 <script
   type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/core-flux@1.1.2/dist/core-flux.min.js"
-  integrity="sha256-Mo8ImmrV6mB/D+UAnR3lwfCtdhE9xhDaQmOZ85fkBr8="
+  integrity="sha256-DA1HqZunk0Kg/VgGTWYzJFPoAxMzndzarBvNRJaGnPE="
   crossorigin="anonymous"
 ></script>
 ```
