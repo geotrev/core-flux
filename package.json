@@ -16,7 +16,7 @@
     "prettier:check": "prettier --config .prettierrc.json --check",
     "prettier:write": "prettier --config .prettierrc.json --write",
     "eslint:check": "eslint -c .eslintrc.json",
-    "release": "release-it"
+    "release": "dotenv release-it"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
@@ -28,6 +28,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.4.6",
     "commithelper": "^1.2.0",
+    "dotenv-cli": "^4.1.1",
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jest": "^25.7.0",
