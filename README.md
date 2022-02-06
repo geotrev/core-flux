@@ -2,11 +2,11 @@
 <p align="center">½kb functional flux utility. Control the flow of state data between subscribers.</p>
 <br>
 <p align="center">
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true" alt="Version"></a>
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/l/core-flux.svg?sanitize=true" alt="License"></a>
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/circleci/github/geotrev/core-flux/main" alt="Circle CI status (main)" /></a>
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/bundlephobia/minzip/core-flux" alt="bundle size" /></a>
-  <a href="https://www.npmjs.com/package/core-flux"><img src="https://badgen.net/david/dev/geotrev/core-flux" alt="devDependencies" /></a>
+  <a href="https://www.npmjs.com/package/core-flux"><img src="https://img.shields.io/npm/v/core-flux.svg?sanitize=true&style=flat-square" alt="Version"></a>
+  <a href="https://github.com/geotrev/core-flux/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/core-flux.svg?sanitize=true&style=flat-square" alt="License"></a>
+  <a href="https://github.com/geotrev/core-flux/actions/workflows/test.yml?query=branch%3Amain"><img src="https://badgen.net/github/checks/geotrev/core-flux/main?style=flat-square" alt="CI status" /></a>
+  <a href="https://bundlephobia.com/package/core-flux"><img src="https://badgen.net/bundlephobia/minzip/core-flux?style=flat-square" alt="bundle size" /></a>
+  <a href="https://www.libraries.io/npm/core-flux"><img src="https://img.shields.io/librariesio/release/npm/core-flux" alt="dependency status" /></a>
 </p>
 
 [See a demo of Core Flux in action!](https://todo-rotom.netlify.app/)
