@@ -2,6 +2,8 @@
   "clearMocks": true,
   "restoreMocks": true,
   "testMatch": ["<rootDir>/__tests__/*.spec.js"],
-  "testURL": "http://localhost/",
+  "testEnvironmentOptions": {
+    "url": "http://localhost/"
+  },
   "verbose": true
 }

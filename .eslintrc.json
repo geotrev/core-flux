@@ -6,17 +6,13 @@
     "es6": true,
     "jest/globals": true
   },
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
   "plugins": ["jest"],
-  "extends": [
-    "eslint:recommended",
-    "prettier",
-    "plugin:jest/recommended"
-  ],
+  "extends": ["eslint:recommended", "prettier", "plugin:jest/recommended"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
