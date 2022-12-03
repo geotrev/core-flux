@@ -1,3 +1,7 @@
+
+
+## [1.1.4](https://github.com/geotrev/core-flux/compare/v1.1.3...v1.1.4) (2022-12-03)
+
 ## [1.1.3](https://github.com/geotrev/core-flux/compare/v1.1.2...v1.1.3) (2022-01-18)
 
 
@@ -55,4 +59,3 @@
 
 
 ## [0.0.2](https://github.com/geotrev/core-flux/compare/v1.1.2...v1.1.3) (2021-04-22)
-
