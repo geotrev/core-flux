@@ -6,11 +6,18 @@ const mockReducer = jest.fn()
 
 const testSubscriberData = "variable test data"
 const testSubscriber = {}
+const TEST_TYPE = "test"
+const FAIL_TYPE = "fail"
 
 function testReducer(state, action) {
-  if (action.type === "TEST_TYPE") {
-    state.foo = action.payload.foo
-    return state
+  switch (action.type) {
+    case TEST_TYPE: {
+      state.foo = action.payload.foo
+      return state
+    }
+    case FAIL_TYPE: {
+      return action.payload
+    }
   }
 }
 
@@ -23,7 +30,7 @@ function getMockStore() {
 }
 
 describe("createStore", () => {
-  describe("artifacts", () => {
+  describe("initialize", () => {
     it("returns dispatch and subscribe helper functions", () => {
       // Given
       const Store = getMockStore()
@@ -43,10 +50,24 @@ describe("createStore", () => {
         expect.objectContaining({ state: {}, subscriptions: [] })
       )
     })
+
+    it("throws error if invalid initialState", () => {
+      // Given
+      const badStates = [false, null, undefined, [], 123, "foo"]
+
+      badStates.forEach((badState) => {
+        // When
+        const createBadStore = () => createStore(badState, mockReducer)
+
+        // Then
+        expect(createBadStore).toThrow(
+          "[core-flux] createStore(): The initial state value must be a plain object."
+        )
+      })
+    })
   })
 
   describe("state bindings", () => {
-    const TEST_TYPE = "TEST_TYPE"
     const testPayload = { foo: "bar" }
 
     it("calls reducer on dispatch", () => {
@@ -57,7 +78,7 @@ describe("createStore", () => {
       Store.dispatch(TEST_TYPE, testPayload)
 
       // Then
-      expect(mockReducer).toBeCalledWith(
+      expect(mockReducer).toHaveBeenCalledWith(
         Store.__data.state,
         expect.objectContaining({ payload: testPayload, type: TEST_TYPE })
       )
@@ -77,7 +98,7 @@ describe("createStore", () => {
       Store.dispatch(TEST_TYPE, testPayload)
 
       // Then
-      expect(mockBindState).toBeCalledWith(
+      expect(mockBindState).toHaveBeenCalledWith(
         Store.__data.subscriptions,
         expect.objectContaining({ foo: "bar" }),
         expect.any(Function)
@@ -101,6 +122,27 @@ describe("createStore", () => {
         expect.objectContaining({ foo: "bar" })
       )
     })
+
+    it("throws error if next state value is not a plain object", () => {
+      // Given
+      const Store = createStore(
+        {},
+        testReducer,
+        mockBindSubscriber,
+        testBindState
+      )
+      const badStates = [false, null, undefined, [], 123, "foo"]
+
+      badStates.forEach((badState) => {
+        // When
+        const dispatchBadState = () => Store.dispatch(FAIL_TYPE, badState)
+
+        // Then
+        expect(dispatchBadState).toThrow(
+          "[core-flux] bindState callback: The reduced state value must be a plain object. If there is no change in state, simply return it."
+        )
+      })
+    })
   })
 
   describe("subscriber bindings", () => {
@@ -112,7 +154,7 @@ describe("createStore", () => {
       Store.subscribe(testSubscriber, testSubscriberData)
 
       // Then
-      expect(mockBindSubscriber).toBeCalledWith(
+      expect(mockBindSubscriber).toHaveBeenCalledWith(
         Store.__data.subscriptions[0],
         Store.__data.state
       )
@@ -130,6 +172,28 @@ describe("createStore", () => {
         expect.arrayContaining([
           expect.arrayContaining([testSubscriber, testSubscriberData]),
         ])
+      )
+    })
+
+    it("throws error if invalid subscriber", () => {
+      // Given
+      const Store = getMockStore()
+      const subscribe = () => Store.subscribe(null, testSubscriberData)
+
+      // Then
+      expect(subscribe).toThrow(
+        "[core-flux] subscribe(): `subscriber` and `data` arguments are required."
+      )
+    })
+
+    it("throws error if invalid subscriber data", () => {
+      // Given
+      const Store = getMockStore()
+      const subscribe = () => Store.subscribe(testSubscriber, null)
+
+      // Then
+      expect(subscribe).toThrow(
+        "[core-flux] subscribe(): `subscriber` and `data` arguments are required."
       )
     })
   })
