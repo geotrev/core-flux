@@ -8,10 +8,17 @@ const Stores = new Map()
  */
 let idValue = 0
 
-const getTypeTag = (value) =>
-  Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
+function getTypeTag(value) {
+  return Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
+}
 
-const isPlainObject = (value) => getTypeTag(value) === "object"
+function isPlainObject(value) {
+  return getTypeTag(value) === "object"
+}
+
+function throwError(msg) {
+  throw new Error(`[core-flux] ${msg}`)
+}
 
 /**
  * Generate a new ID by incrementing the Store ID.
@@ -40,8 +47,8 @@ function getState(id) {
  */
 function setState(id, rawNextStateValue) {
   if (!isPlainObject(rawNextStateValue)) {
-    throw new Error(
-      "[core-flux] bindState callback: The reduced state value must be a plain object. If there is no change in state, simply return it."
+    return throwError(
+      "bindState callback: The reduced state value must be a plain object. If there is no change in state, simply return it."
     )
   }
 
@@ -69,8 +76,8 @@ function setState(id, rawNextStateValue) {
  */
 export function createStore(initialState, reducer, bindSubscriber, bindState) {
   if (!initialState || !isPlainObject(initialState)) {
-    throw new Error(
-      "[core-flux] createStore(): The initial state value must be a plain object."
+    return throwError(
+      "createStore(): The initial state value must be a plain object."
     )
   }
 
@@ -92,8 +99,8 @@ export function createStore(initialState, reducer, bindSubscriber, bindState) {
     },
     subscribe(subscriber, data) {
       if (!subscriber || !data) {
-        throw new Error(
-          "[core-flux] subscribe(): `subscriber` and `data` arguments are required."
+        return throwError(
+          "subscribe(): `subscriber` and `data` arguments are required."
         )
       }
 
