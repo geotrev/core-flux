@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:base"],
+  "npm": { "enabled": true },
   "rebaseStalePrs": true,
   "ignorePaths": ["**/node_modules/**"],
   "schedule": ["every 3 months on the first day of the month"],
