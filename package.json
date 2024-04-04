@@ -39,7 +39,7 @@
     "lint-staged": "^13.2.1",
     "paopu": "^0.1.1",
     "prettier": "^3.0.0",
-    "release-it": "^16.1.2",
+    "release-it": "^17.0.0",
     "rollup": "^3.20.3"
   },
   "engines": {
