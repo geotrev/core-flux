@@ -180,7 +180,7 @@ window.fooStoreData = fooStore.__data
 console.log(window.fooStoreData) // { state: {...}, subscriptions: [...] }
 ```
 
-_**NOTE:** Avoid including `__data` in production environments; the data is mutable and therefore exposes a security risk if accessible._
+_**NOTE:** Avoid over-referencing or depending on `__data` too deeply. The data is mutable and changing it directly will cause unexpected behavior._
 
 ## Data model
 
